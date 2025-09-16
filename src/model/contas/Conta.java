@@ -15,7 +15,7 @@ public abstract class Conta {
     protected String titular;
     protected String email;
     protected String senha;
-    protected BigDecimal saldo; // BigDecimal
+    protected BigDecimal saldo;
 
     Conta(int numero, String titular, String email, String senha, BigDecimal saldo){
         this.numero = numero;
