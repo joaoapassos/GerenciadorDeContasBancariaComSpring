@@ -17,16 +17,19 @@ public class ContaCorrenteServiceSql extends ContaCorrenteService{
         ContaCorrenteDAO contas = new ContaCorrenteDAO();
         return contas.listar();
     }
-    
-    public void cadastrarConta(int numero, String titular, String email, String senha) throws IOException{
-        ContaCorrente conta = new ContaCorrente(numero, titular, email, senha);
 
+    public ContaCorrente buscarContaPorId(int id){
+        ContaCorrenteDAO conta = new ContaCorrenteDAO();
+        return conta.selectById(id);
+    }
+    
+    public void cadastrarConta(ContaCorrente novaConta) throws IOException{
         ContaCorrenteDAO dao = new ContaCorrenteDAO();
 
-        dao.inserir(conta);
+        dao.inserir(novaConta);
     }
 
-    public void atualizarContas(ContaCorrente conta){    
+    public void atualizarConta(ContaCorrente conta){    
         ContaCorrenteDAO dao = new ContaCorrenteDAO();
 
         dao.atualizarConta(conta);

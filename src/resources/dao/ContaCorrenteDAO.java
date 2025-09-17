@@ -47,6 +47,29 @@ public class ContaCorrenteDAO {
             return contas;
     }
 
+    public ContaCorrente selectById(int id){
+        ContaCorrente conta = null;
+        String sql = "SELECT * FROM contas WHERE id = ?";
+        try (Connection conn = Conexao.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    c = new ContaCorrente(
+                        rs.getInt("id"),
+                        rs.getString("titular"),
+                        rs.getString("email"),
+                        rs.getString("senha"),
+                        rs.getBigDecimal("saldo")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("\n\nErro ao buscar conta\n\nDetalhes do erro: " + e.getMessage());
+        }
+        return conta;
+    }
+
     public void atualizarConta(ContaCorrente conta){
         String sql = "UPDATE contas SET titular=?, email=?, senha=?, saldo=? WHERE id=?";
         try (Connection conn = Conexao.getConnection();

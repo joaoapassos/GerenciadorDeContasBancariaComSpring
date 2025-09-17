@@ -6,5 +6,5 @@ import java.util.Map;
 import model.contas.Conta;
 
 public interface AgruparPorInterface {
-    public String aplicar(List<Conta> contas);
+    public Map<Integer, List<Conta>> aplicar(List<Conta> contas);
 }

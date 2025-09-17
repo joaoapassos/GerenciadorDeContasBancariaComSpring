@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import enums.TarifaEnum;
-import exception.ContaInexistenteException;
-import exception.SaldoInsuficienteException;
+import exception.*;
 import interfaces.AgruparPorInterface;
 import interfaces.FiltroInterface;
 import interfaces.OrdenacaoInterface;
@@ -25,14 +24,20 @@ public abstract class ContaCorrenteService {
 
         throw new ContaInexistenteException("Email ou senha inválido");
     }
-    
-    public abstract void cadastrarConta(int numero, String titular, String email, String senha) throws IOException;
 
-    public abstract void atualizarContas(ContaCorrente conta) throws IOException;
+    public abstract ContaCorrente buscarContaPorId(int id);
+    
+    public abstract void cadastrarConta(ContaCorrente novaConta) throws IOException;
+
+    public abstract void atualizarConta(ContaCorrente conta);
 
     public abstract void deletarConta(ContaCorrente conta) throws IOException;
 
-    public List<ContaCorrente> filtrar(FiltroInterface tipoFiltro, List<ContaCorrente> contas){
+    public List<ContaCorrente> filtrar(FiltroInterface tipoFiltro, List<ContaCorrente> contas) throws FiltroNaoExistenteException{
+        if(tipoFiltro == null){
+            throw FiltroNaoExistenteException("Filtro escolhido não existe");
+        }
+        
         List<Conta> contasFiltro = new ArrayList<>(contas);
         contasFiltro = tipoFiltro.aplicar(contasFiltro);
 
@@ -42,7 +47,11 @@ public abstract class ContaCorrenteService {
                 .collect(Collectors.toList());
     }
 
-    public List<ContaCorrente> ordenar(OrdenacaoInterface tipoOrdenacao, List<ContaCorrente> contas){
+    public List<ContaCorrente> ordenar(OrdenacaoInterface tipoOrdenacao, List<ContaCorrente> contas) throws OrdenacaoNaoExistenteException{
+        if(tipoOrdenacao == null){
+            throw OrdenacaoNaoExistenteException("Ordenação escolhida não existe");
+        }
+
         List<Conta> contasOrdenacao = new ArrayList<>(contas);
         contasOrdenacao = tipoOrdenacao.aplicar(contasOrdenacao);
 
@@ -69,14 +78,32 @@ public abstract class ContaCorrenteService {
         return string.toString();
     }
 
-    public String agrupar(AgruparPorInterface agruparTipo, List<ContaCorrente> contas){
+    public Map<Integer, List<ContaCorrente>> agrupar(AgruparPorInterface agruparTipo, List<ContaCorrente> contas) throws AgruparPorNaoExistenteException{
+        if(agruparTipo == null) throw AgruparPorNaoExistenteException("Agrupamento escolhido não existe");
+
         List<Conta> contasAgrupar = new ArrayList<>(contas);
         return agruparTipo.aplicar(contasAgrupar);
     }
 
-    public void agruparEImprimir(AgruparPorInterface agruparTipo, List<ContaCorrente> contas){
+    public void agruparEImprimir(AgruparPorInterface agruparTipo, List<ContaCorrente> contas) throws AgruparPorNaoExistenteException{
         List<Conta> contasAgrupar = new ArrayList<>(contas);
-        System.out.println(agruparTipo.aplicar(contasAgrupar));
+        Map<Integer, List<ContaCorrente>> agrupamento = agruparTipo.aplicar(contasAgrupar);
+        
+        Map<Integer, String> legendas = Map.of(
+            0, "Até R$ 5.000",
+            1, "De R$ 5.001 a R$ 10.000",
+            2, "Acima de R$ 10.000"
+        );
+
+        legendas.forEach((chave, descricao) -> {
+            System.out.println(descricao + ":");
+            List<Conta> grupo = agrupamento.getOrDefault(chave, Collections.emptyList());
+            if (grupo.isEmpty()){
+                System.out.println(" - Nenhuma conta nesta faixa.");
+            } else {
+                grupo.forEach(c -> System.out.println(" - " + c.toString()));
+            }
+        });
     }
 
     public void sacarValor(ContaCorrente conta, BigDecimal valor, TarifaEnum tarifa) throws SaldoInsuficienteException, IOException{

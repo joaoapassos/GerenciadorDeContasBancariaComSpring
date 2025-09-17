@@ -37,11 +37,15 @@ public class ContaCorrenteServiceFile extends ContaCorrenteService{
         }
     }
 
+    public ContaCorrente buscarContaPorId(int id){
+        return null;
+    }
+
     public List<ContaCorrente> carregarContas() {
         throw new UnsupportedOperationException("Metodo requer um parametro: Necessário inserir um caminho para o arquivo");
     }
 
-    public void cadastrarConta(int numero, String titular, String email, String senha) throws IOException{
+    public void cadastrarNovaConta(int numero, String titular, String email, String senha) throws IOException{
         ContaCorrente conta = new ContaCorrente(numero, titular, email, senha);
         List<ContaCorrente> contas = carregarContas(contasCaminho);
         contas.add(conta);

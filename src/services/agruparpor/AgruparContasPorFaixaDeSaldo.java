@@ -1,7 +1,10 @@
 package services.agruparpor;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import interfaces.AgruparPorInterface;
@@ -17,27 +20,21 @@ public class AgruparContasPorFaixaDeSaldo implements AgruparPorInterface{
         this.max = max;
     }   
 
-    public String aplicar(List<Conta> contas){
+    public Map<Integer, List<Conta>> aplicar(List<Conta> contas){
         List<Conta> filtradas = contas.stream()
             .filter(conta -> {
-                double saldo = conta.getSaldo().doubleValue();
-                return saldo >= min.doubleValue() && saldo <= max.doubleValue();
+                BigDecimal saldo = conta.getSaldo();
+                return saldo.compareTo(min) >= 0 && saldo.compareTo(max) <= 0;
             })
             .collect(Collectors.toList());
 
         if (filtradas.isEmpty()) {
-            return String.format("\nNenhuma conta encontrada na faixa de R$%.2f a R$%.2f.\n", min, max);
+            return Collections.emptyMap();
         }
 
-        StringBuilder string = new StringBuilder();
-        string.append(String.format("\nContas na faixa de R$%.2f a R$%.2f:\n", min, max));
-
-        filtradas.forEach(conta -> string.append(" - Conta: ").append(conta.getNumero())
-                                        .append(", Titular: ").append(conta.getTitular())
-                                        .append(", Email: ").append(conta.getEmail())
-                                        .append(", Saldo: R$ ").append(String.format("%.2f", conta.getSaldo()))
-                                        .append("\n"));
-
-        return string.toString();
+        Map<Integer, List<Conta>> resultado = new HashMap<>();
+        resultado.put(0, filtradas);
+        
+        return resultado;
     }
 }
