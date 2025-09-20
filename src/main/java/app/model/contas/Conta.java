@@ -31,7 +31,7 @@ public abstract class Conta {
     abstract void sacar(BigDecimal valor) throws SaldoInsuficienteException;
 
     public void depositar(BigDecimal valor){
-        this.saldo.add(valor);
+        this.saldo = this.saldo.add(valor);
     }
 
     public BigDecimal getSaldo() {

@@ -6,7 +6,7 @@
     <title>Gerenciador de Contas Bancarias</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="carregarDadosConta()">
+<body onload="carregarDadosConta(), carregarListaDeContasInSelect()">
 
     <button id="alterar-tema">Alterar Tema</button>
     
@@ -19,7 +19,7 @@
                 <button class="sair" id="sair-menu-services">X</button>
                 <section id="aside-sacar" style="display: none;">
                     <h4>Sacar</h4>
-                    <form id="sacar">
+                    <form id="sacar" onsubmit="sacar(event)">
                         <div>
                             <input type="number" placeholder="Valor" name="valor">
                             <button type="submit">Sacar</button>
@@ -28,7 +28,7 @@
                 </section>
                 <section id="aside-depositar" style="display: none;">
                     <h4>Depositar</h4>
-                    <form id="depositar">
+                    <form id="depositar" onsubmit="depositar(event)">
                         <div>
                             <input type="number" placeholder="Valor" name="valor">
                             <button type="submit">Depositar</button>
@@ -37,7 +37,7 @@
                 </section>
                 <section id="aside-transacao" style="display: none;">
                     <h4>Transação</h4>
-                    <form id="trasacao">
+                    <form id="trasacao" onsubmit="transacao(event)">
                         <div>
                             <input type="number" placeholder="Valor" name="valor">
                             <div>
@@ -63,7 +63,7 @@
                 <p style="margin-left: 20px;" id="saldo-conta">Saldo: R$****</p>
             </div>
 
-            <form class="conta" id="editar-conta" onsubmit="updateConta()">
+            <form class="conta" id="editar-conta" onsubmit="updateConta(event)">
                     <div>
                         <label for="">Titular</label>
                         <input type="text" name="titular">

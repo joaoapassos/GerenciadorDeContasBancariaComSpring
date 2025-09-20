@@ -24,8 +24,8 @@ public class ContaCorrente extends Conta{
 
     @Override
     public void sacar(BigDecimal valor) throws SaldoInsuficienteException{
-        if(saldo.doubleValue() < valor.doubleValue()) throw new SaldoInsuficienteException("Saldo insuficiente, não é possivel sacar!");
-        else saldo.add(valor);
+        if(this.saldo.doubleValue() < valor.doubleValue()) throw new SaldoInsuficienteException("Saldo insuficiente, não é possivel sacar!");
+        else this.saldo = this.saldo.subtract(valor);
     }
 
     public void imprimirDados(){

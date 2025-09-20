@@ -12,6 +12,7 @@ import app.interfaces.FiltroInterface;
 import app.interfaces.OrdenacaoInterface;
 import app.model.contas.Conta;
 import app.model.contas.ContaCorrente;
+import app.exception.SaldoInsuficienteException;
 
 public abstract class ContaCorrenteService {
     public abstract List<ContaCorrente> carregarContas();
@@ -100,8 +101,12 @@ public abstract class ContaCorrenteService {
         
     }
 
-    public void sacarValor(ContaCorrente conta, BigDecimal valor, TarifaEnum tarifa) throws SaldoInsuficienteException, IOException{
+    public void sacarValor(ContaCorrente conta, BigDecimal valor, TarifaEnum tarifa) throws SaldoInsuficienteException{
+        System.out.println(conta);
         conta.sacar(tarifa.aplicar(valor));
+
+        System.out.println(valor);
+        System.out.println(conta);
 
         atualizarSaldo(conta);
     }
@@ -110,6 +115,18 @@ public abstract class ContaCorrenteService {
         conta.depositar(valor);
 
         atualizarSaldo(conta);
+    }
+
+    public void transacao(ArrayList<ContaCorrente> contas, BigDecimal valor) throws SaldoInsuficienteException{
+        ContaCorrente contaOrigem = contas.get(0);
+        ContaCorrente contaDestino = contas.get(1);
+
+        System.out.println(contaOrigem.getSaldo());
+        System.out.println(contaDestino.getSaldo());
+        System.out.println(valor);
+        
+        sacarValor(contaOrigem, valor, TarifaEnum.ISENTA);
+        depositarValor(contaDestino, valor);
     }
 
     public abstract void atualizarSaldo(ContaCorrente conta);

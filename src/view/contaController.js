@@ -88,6 +88,8 @@ async function carregarConta(){
         return;
     }
     
+    salvarLocalStorageConta(data);
+
     return data;
 }
 
@@ -140,6 +142,24 @@ async function carregarListaMainDeContas() {
     
 }
 
+async function carregarListaDeContasInSelect() {
+    const contas = await carregarContas();
+
+    let lista = document.getElementById("contas-transacao");
+
+    const conta = JSON.parse(localStorage.getItem("Conta"));
+
+    contas.forEach(c => {
+        if(c.numero !== conta.numero){
+            lista.innerHTML += `
+                <option value="${c.numero}" selected>${c.titular}</option>
+            `
+        } 
+    });
+
+    lista.options[0].selected = true;
+}
+
 async function deletarConta() {
 
     const conta = JSON.parse(localStorage.getItem("Conta"));
@@ -163,10 +183,10 @@ async function deletarConta() {
     voltarListaDeContas();
 }
 
-async function updateConta() {
+async function updateConta(e) {
     let conta = JSON.parse(localStorage.getItem("Conta"));
 
-    const form = document.getElementById('editar-conta')
+    const form = e.target;
 
     conta = {
         numero : conta.numero,
@@ -190,4 +210,105 @@ async function updateConta() {
         console.error("Erro: " + error);
         return;
     }
+
+    salvarLocalStorageConta(conta);
+}
+
+async function sacar(e) {
+    e.preventDefault();
+    let conta = JSON.parse(localStorage.getItem("Conta"));
+    const form = e.target;
+    // console.log(form.valor.value)
+
+    const response = await fetch(`${urlServe}/api/contas/corrente/sacar?valor=${form.valor.value}`, {
+        method: "PUT",
+        body: JSON.stringify(conta),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+
+    if(response.status !== 200){
+        const error = await response.json();
+        console.log("Erro ao sacar saldo da conta")
+        console.error("Erro: " + error.erro);
+        alert("Erro ao sacar saldo da conta\nErro: " + error.erro)
+        return;
+    }
+    
+    salvarLocalStorageConta(conta);
+
+    window.location.reload();
+}
+
+async function depositar(e) {
+    e.preventDefault();
+    let conta = JSON.parse(localStorage.getItem("Conta"));
+    const form = e.target;
+    console.log(form.valor.value)
+
+    const response = await fetch(`${urlServe}/api/contas/corrente/depositar?valor=${form.valor.value}`, {
+        method: "PUT",
+        body: JSON.stringify(conta),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+
+    if(response.status !== 200){
+        const error = await response.json();
+        console.log("Erro ao depositar saldo da conta")
+        console.error("Erro: " + error);
+        alert("Erro ao depositar saldo da conta\nErro: " + error)
+        return;
+    }
+  
+    salvarLocalStorageConta(conta);
+
+    window.location.reload();
+}
+
+async function getContaById(id){
+    const response = await fetch(`${urlServe}/api/contas/corrente/${id}`, {
+        method: "GET"
+    })
+    
+    if(response.status !== 200){
+        const error = await response.json();
+        console.log("Erro ao buscar conta")
+        console.error("Erro: " + error);
+        alert("Erro ao buscar conta\nErro: " + error)
+        return;
+    }
+
+    return await response.json();
+}
+
+async function transacao(e) {
+    e.preventDefault();
+    let conta = JSON.parse(localStorage.getItem("Conta"));
+    const form = e.target;
+
+    const contaDestino = await getContaById(form.contas.value)
+
+    const contas = [conta, contaDestino]
+
+    const response = await fetch(`${urlServe}/api/contas/corrente/transacao?valor=${form.valor.value}`, {
+        method: "POST",
+        body: JSON.stringify(contas),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    
+
+    if(response.status !== 200){
+        const error = await response.json();
+        console.log("Erro realizar transação")
+        console.error("Erro: " + error);
+        alert("Erro realizar transação\nErro: " + error)
+        return;
+    }
+
+    window.location.reload();
 }
