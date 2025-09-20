@@ -27,7 +27,7 @@ body{
 header{
     width: 100%;
     position: absolute;
-    top: 100px;
+    top: 8vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -103,6 +103,11 @@ main{
             #cadastrar-acessar{
                 margin: auto;
             }
+
+            .btn-services-active{
+                color: var(--background);
+                background-color: var(--color);
+            }
         }
         .contas{
             height: 240px;
@@ -126,6 +131,44 @@ main{
             color: gray;
         }
 
+        aside{
+            height: 400px;
+            width: 260px;
+            border: 2px solid var(--color);
+            border-radius: 20px;
+            position: absolute;
+            left: -290px;
+
+            section{
+                padding-top: 60px;
+                width: 100%;
+                height: 100%;
+                
+                form{
+                    padding-top: 10px;
+                    gap: 20px;
+                    justify-content: start;
+                    div{
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: start;
+                        div{
+                            position: relative;
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: start;
+                            flex-wrap: nowrap;
+                            input[type="number"]{
+                                width: 75px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -146,13 +189,24 @@ form{
             width: 100%;
         }
         input{
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background-color: var(--background);
             border: 2px solid gray;
             border-radius: 5px;
             padding: 5px 10px;
             &focus{
                 outline: none;
+                border: 2px solid var(--color);
+            }
+        }
+        select{
+            margin-bottom: 10px;
+            background-color: var(--background);
+            border: 2px solid gray;
+            border-radius: 5px;
+            padding: 5px 10px;
+            &focus{
+                outline: auto;
                 border: 2px solid var(--color);
             }
         }
@@ -175,8 +229,19 @@ footer{
     justify-content: center;
 }
 
-#alterar-tema{
+#alterar-tema, #sair-conta{
     position: absolute;
     top: 20px;
     right: 20px;
+}
+#deletar-conta{
+    position: absolute;
+    top: 20px;
+    right: 80px;
+}
+.btn-menu-conta{
+    position: relative;
+    top: 20px;
+    left: 20px;
+    margin-right: 10px;
 }

@@ -6,7 +6,7 @@
     <title>Gerenciador de Contas Bancarias</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="carregarListaMainDeContas()">
 
     <button id="alterar-tema">Alterar Tema</button>
 
@@ -14,20 +14,89 @@
 
     <main id="painel-principal">
         <div class="container">
+            <aside id="menu-services" style="display: none;">
+                <button class="sair" id="sair-menu-services">X</button>
+                <section id="aside-filtro" style="display: none;">
+                    <h4>Lista de filtros</h4>
+                    <form id="filtros">
+                        <div>
+                            <div>
+                                <input type="checkbox" name="filtro1" id="filtro1">
+                                <label for="filtro1">Filtrar contas com numero par</label>  
+                            </div>
+                        </div>
+                        <div class="filtro">
+                            <div>
+                                <input type="checkbox" name="filtro2" id="filtro2">
+                                <label for="filtro2">Filtrar contas com saldo maior que:</label>
+                            </div>
+                            <input type="number">
+                        </div>
+
+                        <button type="submit">Aplicar</button>
+                    </form>
+                </section>
+
+                <section id="aside-ordenacao" style="display: none;">
+                    <h4>Lista de Ordenação</h4>
+                    <form id="ordenacao">
+                        <div>
+                            <div>
+                                <input type="checkbox" name="ordenacao1" id="ordenacao1">
+                                <label for="ordenacao1">Ordenar contas por nome (A-Z)</label>  
+                            </div>
+                        </div>
+                        <div class="ordenacao">
+                            <div>
+                                <input type="checkbox" name="ordenacao2" id="ordenacao2">
+                                <label for="ordenacao2">Ordenar contas por saldo (decrecente)</label>
+                            </div>
+                        </div>
+
+                        <button type="submit">Aplicar</button>
+                    </form>
+                </section>
+
+                <section id="aside-agrupar" style="display: none;">
+                    <h4>Lista de Agrupamentos</h4>
+                    <form id="agrupar">
+                        <div>
+                            <div>
+                                <input type="checkbox" name="agrupamentos1" id="agrupamentos1">
+                                <label for="agrupamentos1">Agrupar contas por faixas de saldo</label>  
+                            </div>
+                        </div>
+                        <div class="filtro">
+                            <div>
+                                <input type="checkbox" name="agrupamentos2" id="agrupamentos2">
+                                <label for="agrupamentos2">Agrupar contas com faixa de saldo personalizada:</label>
+                            </div>
+                            <div>
+                                <p>De:</p>
+                                <input type="number">
+                                <p>Até</p>
+                                <input type="number">
+                            </div>
+                        </div>
+
+                        <button type="submit">Aplicar</button>
+                    </form>
+                </section>
+            </aside>
             <section class="menu" style="top: 0;">
                 <menu>
-                    <li><button>Filtrar</button></li>
-                    <li><button>Ordenar</button></li>
-                    <li><button>Agrupar</button></li>
+                    <li><button id="btn-filtrar" class="btn-services" onclick="abrirMenuServices(this)">Filtrar</button></li>
+                    <li><button id="btn-ordenar" class="btn-services" onclick="abrirMenuServices(this)">Ordenar</button></li>
+                    <li><button id="btn-agrupar" class="btn-services" onclick="abrirMenuServices(this)">Agrupar</button></li>
                 </menu>
                 <p>Filtro ou ordenação ou agrupamento aplicado</p>
             </section>
             <hr>
             <section class="contas">
-                <ul>
-                    <li>
-                        <button class="conta" onclick="selecionarContas(this)" onblur="contaDeselecionada()">Conta.toString()</button>
-                    </li>
+                <ul id="lista-main">
+                    <!-- <li>
+                        <button id="email" class="conta" onclick="selecionarContas(this)" onblur="contaDeselecionada()">Conta.toString()</button>
+                    </li> -->
                 </ul>
             </section>
             <hr>
@@ -38,40 +107,12 @@
             </section>
         </div>
     </main>
-    <main id="form-cadastro-acessar" style="display: none;">
-        <div class="container">
-            <button class="sair" onclick="voltarListaDeContas()">Sair</button>
-            <div class="title">
-                <p id="title-cadastrar-acessar">Cadastrar conta</p>
-            </div>
-            
-            <form id="cadastrar-conta" style="display: none;">
-                <div>
-                    <label for="">Titular</label>
-                    <input type="text">
-                    <label for="">E-mail</label>
-                    <input type="email">
-                    <label for="">Senha</label>
-                    <input type="password">
-                    <button type="submit">Cadastrar conta</button>
-                </div>
-            </form>
-
-            <form id="acessar-conta" style="display: none;">
-                <div>
-                    <label for="">E-mail</label>
-                    <input type="email">
-                    <label for="">Senha</label>
-                    <input type="password">
-                    <button type="submit">Acessar conta</button>
-                </div>
-            </form>
-        </div>
-    </main>
 
     <footer><p>© João Alves Passos</p></footer>
 </body>
 
     <script src="script.js"></script>
+    <script src="contaController.js"></script>
+    <script src="servicesController.js"></script>
 
 </html>

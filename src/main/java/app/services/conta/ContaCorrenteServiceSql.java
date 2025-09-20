@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import app.model.contas.ContaCorrente;
+import app.exception.*;
 import app.resources.dao.ContaCorrenteDAO;
 
 import org.springframework.stereotype.Service; 
@@ -19,6 +20,16 @@ public class ContaCorrenteServiceSql extends ContaCorrenteService{
     public List<ContaCorrente> carregarContas(){
         ContaCorrenteDAO contas = new ContaCorrenteDAO();
         return contas.listar();
+    }
+
+    public ContaCorrente loginConta(ContaCorrente conta){
+        String email = conta.getEmail();
+        String senha = conta.getSenha();
+
+        ContaCorrenteDAO dao = new ContaCorrenteDAO();
+        
+        return dao.loginConta(email, senha);
+        
     }
 
     public ContaCorrente buscarContaPorId(int id){

@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.exception.ContaInexistenteException;
 import app.model.contas.ContaCorrente;
 import app.services.conta.ContaCorrenteService;
 
@@ -110,5 +111,29 @@ public class ContaCorrenteDAO {
         } catch (SQLException e) {
             System.out.println("\n\nErro ao deletar conta\n\nDetalhes do erro: " + e.getSQLState());
         }
+    }
+
+    public ContaCorrente loginConta(String email, String senha){
+        ContaCorrente conta = null;
+        String sql = "SELECT * FROM contas WHERE email = ? AND senha = ?";
+        try (Connection conn = Conexao.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            pstmt.setString(2, senha);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    conta = new ContaCorrente(
+                        rs.getInt("id"),
+                        rs.getString("titular"),
+                        rs.getString("email"),
+                        rs.getString("senha"),
+                        rs.getBigDecimal("saldo")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("\n\nErro ao realizar login\n\nDetalhes do erro: " + e.getMessage());
+        }
+        return conta;
     }
 }

@@ -16,13 +16,7 @@ import app.model.contas.ContaCorrente;
 public abstract class ContaCorrenteService {
     public abstract List<ContaCorrente> carregarContas();
 
-    public ContaCorrente loginConta(List<ContaCorrente> contas, String email, String senha) throws ContaInexistenteException{
-        for(ContaCorrente conta : contas){
-            if(conta.getEmail().equals(email.trim()) && conta.getSenha().equals(senha.trim())) return conta;
-        }
-
-        throw new ContaInexistenteException("Email ou senha inválido");
-    }
+    public abstract ContaCorrente loginConta(ContaCorrente conta);
 
     public abstract ContaCorrente buscarContaPorId(int id);
     

@@ -1,8 +1,15 @@
-package app.controllers.contas;
+package app.controllers.services;
+
 
 import app.model.contas.ContaCorrente;
 import app.services.conta.*;
 import app.services.filtro.*;
+import app.exception.FiltroNaoExistenteException;
+import app.exception.FiltroRequerParametroException;
+import app.interfaces.FiltroInterface;
+import app.services.conta.ContaCorrenteService;
+import app.services.filtro.FiltroByNumberPar;
+import app.services.filtro.FiltroBySaldoMaiorQ;
 import app.exception.*;
 import app.interfaces.*;
 import app.services.filtro.*;
@@ -14,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/services/filter")
+@RequestMapping("/api/services/corrente/filter")
 public class FiltroContaCorrenteController {
     private final ContaCorrenteService contaCorrenteService;
     @Autowired
@@ -22,8 +29,8 @@ public class FiltroContaCorrenteController {
         this.contaCorrenteService = contaCorrenteService;
     }
 
-    @GetMapping("/{typeFilter}")
-    public List<ContaCorrente> filtrar(@PathVariable String typeFilter, @RequestParam(required = false) BigDecimal saldoMin) throws FiltroNaoExistenteException, FiltroRequerParametroException{
+    @PostMapping("/{typeFilter}")
+    public List<ContaCorrente> filtrar(@PathVariable String typeFilter, @RequestBody List<ContaCorrente> contas, @RequestParam(required = false) BigDecimal saldoMin) throws FiltroNaoExistenteException, FiltroRequerParametroException{
         FiltroInterface filtro;
 
         if("FiltroByNumberPar".equals(typeFilter)) filtro = new FiltroByNumberPar();
@@ -33,7 +40,7 @@ public class FiltroContaCorrenteController {
         }
         else throw new FiltroNaoExistenteException("Filtro escolhido não existe");
 
-        List<ContaCorrente> contas = contaCorrenteService.carregarContas();
+        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.filtrar(filtro, contas);
     }
 }

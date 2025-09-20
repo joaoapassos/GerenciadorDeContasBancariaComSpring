@@ -1,4 +1,4 @@
-package app.controllers.contas;
+package app.controllers.services;
 
 import app.model.contas.ContaCorrente;
 import app.services.conta.*;
@@ -6,6 +6,11 @@ import app.services.filtro.*;
 import app.exception.*;
 import app.interfaces.*;
 import app.services.ordenacao.*;
+import app.exception.OrdenacaoNaoExistenteException;
+import app.interfaces.OrdenacaoInterface;
+import app.services.conta.ContaCorrenteService;
+import app.services.ordenacao.OrdenacaoByName;
+import app.services.ordenacao.OrdenacaoDecrecente;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/services/order")
+@RequestMapping("/api/services/corrente/order")
 public class OrdenacaoContaCorrenteController {
     private final ContaCorrenteService contaCorrenteService;
     @Autowired
@@ -22,8 +27,8 @@ public class OrdenacaoContaCorrenteController {
     }
 
 
-    @GetMapping("/{typeOrdenacao}")
-    public List<ContaCorrente> ordenar(@PathVariable String typeOrdenacao) throws OrdenacaoNaoExistenteException{
+    @PostMapping("/{typeOrdenacao}")
+    public List<ContaCorrente> ordenar(@PathVariable String typeOrdenacao, @RequestBody List<ContaCorrente> contas) throws OrdenacaoNaoExistenteException{
         OrdenacaoInterface ordenacao;
 
         if("OrdenacaoByName".equals(typeOrdenacao)) ordenacao = new OrdenacaoByName();
@@ -31,7 +36,7 @@ public class OrdenacaoContaCorrenteController {
         else throw new OrdenacaoNaoExistenteException("Ordenação escolhida não existe");
 
         
-        List<ContaCorrente> contas = contaCorrenteService.carregarContas();
+        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.ordenar(ordenacao, contas);  
     }
 }

@@ -1,39 +1,66 @@
-// Aguarda o carregamento completo do HTML antes de executar o script
+// const url = "127.0.0.1:5500/src/view/";
+const urlServe = "http://localhost:8080";
 function selecionarContas(e){
     e.focus();
     const btnAcessar = document.getElementById('cadastrar-acessar');
+    localStorage.setItem("emailCache", e.id);
     btnAcessar.innerText = "Acessar conta"
 }
 function contaDeselecionada(){
     setTimeout(()=>{
         const btnAcessar = document.getElementById('cadastrar-acessar');
         btnAcessar.innerText = "Cadastrar nova conta"
-    },500)
+    },160)
 }
 
 function cadastrarOuAcessarConta(e){
-    const painel = document.getElementById("painel-principal");
-    painel.style.display = "none";
-    const form = document.getElementById("form-cadastro-acessar");
-    form.style.display = "flex";
     if(e.innerText === "Cadastrar nova conta"){
-        document.getElementById("cadastrar-conta").style.display = "flex";
+        window.location.href = "cadastro.html";
     }
     else if(e.innerText === "Acessar conta"){
-        document.getElementById("acessar-conta").style.display = "flex";
+        window.location.href = "acessar.html";    
     }
 }
 
 function voltarListaDeContas(){
-    const painel = document.getElementById("painel-principal");
-    painel.style.display = "flex";
-    const form = document.getElementById("form-cadastro-acessar");
-    form.style.display = "none";
-    
-    document.getElementById("cadastrar-conta").style.display = "none";
-    document.getElementById("acessar-conta").style.display = "none";
+    window.location.href = "index.html";
+    localStorage.removeItem("emailCache");
 }
 
+function abrirMenuServices(e){
+    const aside = document.getElementById("menu-services");
+    if(aside.style.display == "block") return;
+    e.classList.add("btn-services-active");
+    let service;
+    if(e.innerText == "Filtrar") service = "aside-filtro";
+    else if(e.innerText == "Ordenar") service = "aside-ordenacao";
+    else if(e.innerText == "Agrupar") service = "aside-agrupar";
+    else if(e.innerText == "Sacar") service = "aside-sacar";
+    else if(e.innerText == "Depositar") service = "aside-depositar";
+    else if(e.innerText == "Transação") service = "aside-transacao";
+
+    const asideService = document.getElementById(service);
+
+
+    aside.style.display = "block";
+    asideService.style.display = "block"
+
+    const sair = document.getElementById("sair-menu-services");
+
+    sair.addEventListener('click', ()=>{
+        aside.style.display = "none";
+        asideService.style.display = "none"
+        e.classList.remove("btn-services-active")
+    })
+}
+
+function salvarLocalStorageConta(conta){
+    localStorage.setItem("Conta", JSON.stringify(conta));
+}
+
+function limparLocalStorageConta(){
+    localStorage.removeItem("Conta");
+}
 
 
 {

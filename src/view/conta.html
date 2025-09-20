@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Contas Bancarias</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="carregarDadosConta()">
+
+    <button id="alterar-tema">Alterar Tema</button>
+    
+    <header><h1 id="title-page">Gerenciador de Contas Bancarias</h1></header>
+    
+    <main id="painel-principal">
+        <div class="container">
+
+            <aside id="menu-services" style="display: none;">
+                <button class="sair" id="sair-menu-services">X</button>
+                <section id="aside-sacar" style="display: none;">
+                    <h4>Sacar</h4>
+                    <form id="sacar">
+                        <div>
+                            <input type="number" placeholder="Valor" name="valor">
+                            <button type="submit">Sacar</button>
+                        </div>
+                    </form>
+                </section>
+                <section id="aside-depositar" style="display: none;">
+                    <h4>Depositar</h4>
+                    <form id="depositar">
+                        <div>
+                            <input type="number" placeholder="Valor" name="valor">
+                            <button type="submit">Depositar</button>
+                        </div>
+                    </form>
+                </section>
+                <section id="aside-transacao" style="display: none;">
+                    <h4>Transação</h4>
+                    <form id="trasacao">
+                        <div>
+                            <input type="number" placeholder="Valor" name="valor">
+                            <div>
+                                <p>Para: </p>
+                                <select name="contas" id="contas-transacao">
+                                    <option value="null" selected>Selecione a conta</option>
+                                </select>
+                            </div>
+                            <button type="submit">Realizar transação</button>
+                        </div>
+                    </form>
+                </section>
+            </aside>
+
+            <button id="sair-conta" onclick="voltarListaDeContas(), limparLocalStorageConta()">Sair</button>
+            <button id="deletar-conta" onclick="deletarConta()">Deletar conta</button>
+            <button id="sacar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Sacar</button>
+            <button id="depositar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Depositar</button>
+            <button id="transacao" class="btn-menu-conta" onclick="abrirMenuServices(this)">Transação</button>
+            
+            <div class="title" style="margin-top: 50px; flex-direction: column; align-items: start; gap: 10px;">
+                <p style="margin-left: 20px;" id="id-conta">ID#0000</p>
+                <p style="margin-left: 20px;" id="saldo-conta">Saldo: R$****</p>
+            </div>
+
+            <form class="conta" id="editar-conta" onsubmit="updateConta()">
+                    <div>
+                        <label for="">Titular</label>
+                        <input type="text" name="titular">
+                        <label for="">E-mail</label>
+                        <input type="email" name="email">
+                        <label for="">Senha</label>
+                        <input type="password" name="senha">
+                        <button type="submit">Editar conta</button>
+                    </div>
+            </form>
+
+        </div>
+    </main>
+
+    <footer><p>© João Alves Passos</p></footer>
+</body>
+
+    <script src="script.js"></script>
+    <script src="contaController.js"></script>
+    <script src="servicesController.js"></script>
+
+</html>

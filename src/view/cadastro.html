@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Contas Bancarias</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button id="alterar-tema">Alterar Tema</button>
+
+    <header><h1>Gerenciador de Contas Bancarias</h1></header>
+
+    <main id="form-cadastro-acessar">
+        <div class="container">
+            <button class="sair" onclick="voltarListaDeContas()">Sair</button>
+            <div class="title">
+                <p>Cadastrar conta</p>
+            </div>
+            
+            <form id="cadastrar-conta" class="conta" onsubmit="cadastrarConta(event)">
+                <div>
+                    <label for="">Titular</label>
+                    <input type="text" name="titular" required>
+                    <label for="">E-mail</label>
+                    <input type="email" name="email" required>
+                    <label for="">Senha</label>
+                    <input type="password" name="senha" required>
+                    <button type="submit" name="btnCadastrar">Cadastrar conta</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer><p>© João Alves Passos</p></footer>
+</body>
+
+    <script src="script.js"></script>
+    <script src="contaController.js"></script>
+
+</html>

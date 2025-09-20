@@ -1,8 +1,14 @@
-package app.controllers.contas;
+package app.controllers.services;
 
 import app.model.contas.ContaCorrente;
 import app.services.conta.*;
 import app.services.filtro.*;
+import app.exception.AgruparPorNaoExistenteException;
+import app.exception.AgruparPorRequerParametroException;
+import app.interfaces.AgruparPorInterface;
+import app.services.agruparpor.AgruparContasPorFaixaDeSaldo;
+import app.services.agruparpor.AgruparContasPorSaldo;
+import app.services.conta.ContaCorrenteService;
 import app.exception.*;
 import app.interfaces.*;
 import app.services.agruparpor.*;
@@ -14,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/services/groupby")
+@RequestMapping("/api/services/corrente/groupby")
 public class AgruparPorContaCorrenteController {
     private final ContaCorrenteService contaCorrenteService;
     @Autowired
@@ -22,11 +28,12 @@ public class AgruparPorContaCorrenteController {
         this.contaCorrenteService = contaCorrenteService;
     }
 
-    @GetMapping("/{typeGroupBy}")
+    @PostMapping("/{typeGroupBy}")
     public Map<Integer, List<ContaCorrente>> agrupar(
-        @PathVariable String typeGroupBy, 
+        @PathVariable String typeGroupBy,
         @RequestParam(required = false) BigDecimal min, 
-        @RequestParam(required = false) BigDecimal max) throws AgruparPorRequerParametroException, AgruparPorNaoExistenteException{
+        @RequestParam(required = false) BigDecimal max,
+        @RequestBody List<ContaCorrente> contas) throws AgruparPorRequerParametroException, AgruparPorNaoExistenteException{
         AgruparPorInterface agruparPor;
 
         if("AgruparContasPorFaixaDeSaldo".equals(typeGroupBy)) {
@@ -36,7 +43,7 @@ public class AgruparPorContaCorrenteController {
         else if("AgruparContasPorSaldo".equals(typeGroupBy)) agruparPor = new AgruparContasPorSaldo();
         else throw new AgruparPorNaoExistenteException("Agrupamento escolhido não existe");
 
-        List<ContaCorrente> contas = contaCorrenteService.carregarContas();
+        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.agrupar(agruparPor, contas);
     }
 }
