@@ -29,7 +29,7 @@ function voltarListaDeContas(){
 
 function abrirMenuServices(e){
     const aside = document.getElementById("menu-services");
-    if(aside.style.display == "block") return;
+    if(aside.style.display == "block") fecharMenuServices();
     e.classList.add("btn-services-active");
     let service;
     if(e.innerText == "Filtrar") service = "aside-filtro";
@@ -52,6 +52,15 @@ function abrirMenuServices(e){
         asideService.style.display = "none"
         e.classList.remove("btn-services-active")
     })
+}
+
+function fecharMenuServices(){
+    document.getElementById("aside-filtro").style.display = "none";
+    document.getElementById("aside-ordenacao").style.display = "none";
+    document.getElementById("aside-agrupar").style.display = "none";
+    document.getElementById("btn-filtrar").classList.remove("btn-services-active");
+    document.getElementById("btn-ordenar").classList.remove("btn-services-active");
+    document.getElementById("btn-agrupar").classList.remove("btn-services-active");
 }
 
 function salvarLocalStorageConta(conta){

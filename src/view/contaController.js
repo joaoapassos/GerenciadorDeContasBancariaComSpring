@@ -42,7 +42,7 @@ async function acessarConta(e) {
         saldo: 0.0
     }
 
-    console.log(conta)
+    // console.log(conta)
 
     const response = await fetch(`${urlServe}/api/contas/corrente/acessar`, {
         method: "POST",
@@ -127,10 +127,14 @@ async function carregarContas() {
     return data;
 }
 
-async function carregarListaMainDeContas() {
-    const contas = await carregarContas();
+async function carregarListaMainDeContas(contas) {
+    if(!contas){
+        contas = await carregarContas();
+    }
 
     let lista = document.getElementById("lista-main");
+
+    lista.innerHTML = "";
 
     contas.forEach(c => {
       lista.innerHTML += `

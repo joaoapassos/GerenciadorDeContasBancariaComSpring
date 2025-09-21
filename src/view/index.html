@@ -18,7 +18,7 @@
                 <button class="sair" id="sair-menu-services">X</button>
                 <section id="aside-filtro" style="display: none;">
                     <h4>Lista de filtros</h4>
-                    <form id="filtros">
+                    <form id="filtros" onsubmit="aplicarFiltro(event)">
                         <div>
                             <div>
                                 <input type="checkbox" name="filtro1" id="filtro1">
@@ -30,7 +30,7 @@
                                 <input type="checkbox" name="filtro2" id="filtro2">
                                 <label for="filtro2">Filtrar contas com saldo maior que:</label>
                             </div>
-                            <input type="number" name="valor">
+                            <input type="number" name="valorFiltro2">
                         </div>
 
                         <button type="submit">Aplicar</button>
@@ -39,7 +39,7 @@
 
                 <section id="aside-ordenacao" style="display: none;">
                     <h4>Lista de Ordenação</h4>
-                    <form id="ordenacao">
+                    <form id="ordenacao" onsubmit="aplicarOrdenacao(event)">
                         <div>
                             <div>
                                 <input type="checkbox" name="ordenacao1" id="ordenacao1">
@@ -59,7 +59,7 @@
 
                 <section id="aside-agrupar" style="display: none;">
                     <h4>Lista de Agrupamentos</h4>
-                    <form id="agrupar">
+                    <form id="agrupar" onsubmit="aplicarAgrupamento(event)">
                         <div>
                             <div>
                                 <input type="checkbox" name="agrupamentos1" id="agrupamentos1">
@@ -73,9 +73,9 @@
                             </div>
                             <div>
                                 <p>De:</p>
-                                <input type="number">
+                                <input type="number" name="agrupamentos2value1">
                                 <p>Até</p>
-                                <input type="number">
+                                <input type="number" name="agrupamentos2value2">
                             </div>
                         </div>
 
@@ -89,14 +89,17 @@
                     <li><button id="btn-ordenar" class="btn-services" onclick="abrirMenuServices(this)">Ordenar</button></li>
                     <li><button id="btn-agrupar" class="btn-services" onclick="abrirMenuServices(this)">Agrupar</button></li>
                 </menu>
-                <p>Filtro ou ordenação ou agrupamento aplicado</p>
+                <p id="p-descricao-servico-aplicado">Filtro ou ordenação ou agrupamento aplicado</p>
             </section>
             <hr>
             <section class="contas">
                 <ul id="lista-main">
-                    <!-- <li>
-                        <button id="email" class="conta" onclick="selecionarContas(this)" onblur="contaDeselecionada()">Conta.toString()</button>
-                    </li> -->
+                    <!-- <div>
+                        <legend id="legenda-agrupamento">Agrupamento</legend>
+                        <li>
+                            <button id="email" class="conta" onclick="selecionarContas(this)" onblur="contaDeselecionada()">Conta.toString()</button>
+                        </li>
+                    </div> -->
                 </ul>
             </section>
             <hr>

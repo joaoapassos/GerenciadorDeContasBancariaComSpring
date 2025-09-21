@@ -245,3 +245,22 @@ footer{
     left: 20px;
     margin-right: 10px;
 }
+
+#lista-main{
+    div{
+        width: 100%;
+        border: 2px solid gray;
+        padding: 10px;
+        /* background-color: red; */
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        legend{
+            color: gray;
+            margin-bottom: 5px;
+        }
+
+    }
+}
