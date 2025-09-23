@@ -107,7 +107,7 @@ Existem duas maneiras de executar o frontend, dependendo da sua necessidade.
 
 Neste método, o próprio servidor Spring Boot entrega os arquivos do frontend.
 
-1.  **Copie os Arquivos:** Copie todo o conteúdo da sua pasta `view/` para a pasta `src/main/resources/static` do projeto backend.
+1.  **Copie os Arquivos:** Copie todo o conteúdo da sua pasta `src/view/` para a pasta `src/main/resources/static` do projeto backend.
 2.  **Acesse no Navegador:** Com o backend rodando (`./gradlew bootRun`), abra o navegador e acesse a URL principal da aplicação: **`http://localhost:8080`**.
 
 ---
