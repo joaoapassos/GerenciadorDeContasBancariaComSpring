@@ -2,7 +2,7 @@
 
 Sistema de gerenciamento de contas bancárias, desenvolvido como parte do curso de Programação de Computadores 2 no IFSP.
 
-O projeto implementa funcionalidades de CRUD (Criar, Ler, Atualizar, Deletar) para contas, além de serviços para filtrar, ordenar e agrupar dados, seguindo uma arquitetura de 3 camadas (Controller, Service, Repository).
+O projeto implementa funcionalidades de CRUD (Criar, Ler, Atualizar, Deletar) para contas, além de serviços para filtrar, ordenar e agrupar contas.
 
 ## Tecnologias Utilizadas
 
