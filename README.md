@@ -9,7 +9,7 @@ O projeto implementa funcionalidades de CRUD (Criar, Ler, Atualizar, Deletar) pa
 * **Backend:** Java (JDK 21+), Spring Boot (v3.5.5), Spring Web
 * **Banco de Dados:** MySQL
 * **Build Tool:** Gradle
-* **Frontend:** HTML / CSS / JavaScript (servido estaticamente pelo backend)
+* **Frontend:** HTML / CSS / JavaScript
 
 ---
 
