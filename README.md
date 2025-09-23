@@ -2,14 +2,14 @@
 
 Sistema de gerenciamento de contas bancárias, desenvolvido como parte do curso de Programação de Computadores 2 no IFSP.
 
-O projeto implementa funcionalidades de CRUD (Criar, Ler, Atualizar, Deletar) para contas, além de serviços para filtrar, ordenar e agrupar dados, seguindo uma arquitetura de 3 camadas (Controller, Service, Repository).
+O projeto implementa funcionalidades de CRUD (Criar, Ler, Atualizar, Deletar) para contas, além de serviços para filtrar, ordenar e agrupar contas.
 
 ## Tecnologias Utilizadas
 
 * **Backend:** Java (JDK 21+), Spring Boot (v3.5.5), Spring Web
 * **Banco de Dados:** MySQL
 * **Build Tool:** Gradle
-* **Frontend:** HTML / CSS / JavaScript (servido estaticamente pelo backend)
+* **Frontend:** HTML / CSS / JavaScript
 
 ---
 
@@ -97,17 +97,17 @@ A API estará disponível em `http://localhost:8080`. Você pode usar uma ferram
 
 Existem duas maneiras de executar o frontend, dependendo da sua necessidade.
 
-#### Método 1: Live Server (Recomendado)
+#### Método 1: Live Server
 
 1.  **Instale a Extensão:** No VS Code, instale a extensão **"Live Server"**.
 2.  **Execute o Servidor:** Na pasta do projeto, encontre o diretório `view/`. Clique com o botão direito no arquivo `index.html` (ou no seu arquivo HTML principal) e selecione **"Open with Live Server"**.
 3.  **Acesse no Navegador:** O Live Server abrirá seu navegador em uma URL própria, geralmente `http://localhost:5500` ou `http://127.0.0.1:5500`.
 
-#### Método 2: Servido pelo Backend (Acesso Integrado)
+#### Método 2: Servido pelo Backend
 
 Neste método, o próprio servidor Spring Boot entrega os arquivos do frontend.
 
-1.  **Copie os Arquivos:** Copie todo o conteúdo da sua pasta `src/view/` para a pasta `src/main/resources/static` do projeto backend.
+1.  **Copie os Arquivos:** Copie todo o conteúdo da pasta `src/view/` para a pasta `src/main/resources/static` do projeto backend.
 2.  **Acesse no Navegador:** Com o backend rodando (`./gradlew bootRun`), abra o navegador e acesse a URL principal da aplicação: **`http://localhost:8080`**.
 
 ---
@@ -116,9 +116,9 @@ Neste método, o próprio servidor Spring Boot entrega os arquivos do frontend.
 
 Para que o **Método 1 (Live Server)** funcione, o backend (rodando na porta `8080`) precisa dar permissão para que o frontend (rodando na porta `5500`) possa fazer requisições a ele.
 
-1.  **Abra o arquivo de configuração de CORS** no seu projeto, localizado em `app/config/WebConfig.java`.
+1.  **Abra o arquivo de configuração de CORS** do projeto, localizado em `app/config/WebConfig.java`.
 2.  **Encontre a linha `.allowedOrigins(...)`**.
-3.  **Adicione a URL do seu Live Server** à lista de origens permitidas.
+3.  **Adicione a URL do Live Server** à lista de origens permitidas.
 
     ```java
     // Dentro de WebConfig.java
@@ -130,11 +130,11 @@ Para que o **Método 1 (Live Server)** funcione, o backend (rodando na porta `80
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/api/**")
                 // Adicione a URL do seu Live Server aqui
-                .allowedOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                .allowedOrigins("http://localhost:5500", "http://127.0.0.1:5500") // Altere essa linha caso nenhuma das urls seja a sua
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
         }
     }
     ```
-4.  Reinicie sua aplicação backend para que a nova configuração de CORS seja aplicada.
+4.  Reinicie a aplicação backend para que a nova configuração de CORS seja aplicada.
