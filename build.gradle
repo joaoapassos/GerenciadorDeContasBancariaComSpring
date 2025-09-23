@@ -13,7 +13,6 @@ java {
     }
 }
 
-// ADICIONE ESTE BLOCO PARA RESOLVER O ERRO
 repositories {
     mavenCentral()
 }

@@ -12,7 +12,7 @@ CREATE TABLE contas (
 
 INSERT INTO contas (titular, email, senha, saldo) 
 VALUES  ("João", "joao@email.com", "123", 10000.0),
-		("Ana", "ana@email.com", "456", 3000.0),
-        ("Olivia", "olivia@email.com", "789", 5000.0),
-        ("Silvia", "silvia@email.com", "3217", 11000.0)
+		("Ana", "ana@email.com", "123", 3000.0),
+        ("Olivia", "olivia@email.com", "123", 5000.0),
+        ("Silvia", "silvia@email.com", "123", 11000.0)
 ;

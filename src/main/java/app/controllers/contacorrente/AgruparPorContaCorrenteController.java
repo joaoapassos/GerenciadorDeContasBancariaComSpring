@@ -1,4 +1,4 @@
-package app.controllers.services;
+package app.controllers.contacorrente;
 
 import app.model.contas.ContaCorrente;
 import app.services.conta.*;
@@ -18,6 +18,8 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+//Classe resposavel por gerenciar as rotas que o frontend utiliza para agrupar as contas usando o metodo agrupar de ContaCorrenteService
 
 @RestController
 @RequestMapping("/api/services/corrente/groupby")
@@ -43,7 +45,6 @@ public class AgruparPorContaCorrenteController {
         else if("AgruparContasPorSaldo".equals(typeGroupBy)) agruparPor = new AgruparContasPorSaldo();
         else throw new AgruparPorNaoExistenteException("Agrupamento escolhido não existe");
 
-        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.agrupar(agruparPor, contas);
     }
 }

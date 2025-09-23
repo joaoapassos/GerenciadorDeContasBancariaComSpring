@@ -6,7 +6,7 @@
     <title>Gerenciador de Contas Bancarias</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="carregarListaMainDeContas()">
+<body onload="carregarListaMainDeContas(), carregarTotalDeSaldoDasContas()">
 
     <button id="alterar-tema">Alterar Tema</button>
 
@@ -83,6 +83,7 @@
                     </form>
                 </section>
             </aside>
+            <p id="total-contas" title="Saldo total de todas as contas cadastradas R$">Total: R$0000,00</p>
             <section class="menu" style="top: 0;">
                 <menu>
                     <li><button id="btn-filtrar" class="btn-services" onclick="abrirMenuServices(this)">Filtrar</button></li>

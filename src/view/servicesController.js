@@ -54,6 +54,7 @@ async function aplicarFiltro(e) {
         const error = await response.json();
         console.log("Erro ao filtrar as contas")
         console.error("Erro: " + error);
+        alert("Erro ao filtrar")
         return;
     }
 
@@ -115,6 +116,7 @@ async function aplicarOrdenacao(e) {
         const error = await response.json();
         console.log("Erro ao ordenar as contas")
         console.error("Erro: " + error);
+        alert("Erro ao ordenar")
         return;
     }
 
@@ -186,7 +188,7 @@ async function aplicarAgrupamento(e) {
             }
         ]
 
-        console.log(arrayContas)
+        // console.log(arrayContas)
     }
     else if(type == "Agrupar contas com faixa de saldo personalizada:"){
         response = await fetch(`${urlServe}/api/services/corrente/groupby/AgruparContasPorFaixaDeSaldo?min=${form.agrupamentos2value1.value}&max=${form.agrupamentos2value2.value}`, {
@@ -206,13 +208,14 @@ async function aplicarAgrupamento(e) {
             }
         ]
 
-        console.log(arrayContas)
+        // console.log(arrayContas)
     }
     
     if(response.status !== 200){
         const error = await response.json();
         console.log("Erro ao agrupar as contas")
         console.error("Erro: " + error);
+        alert("Erro ao agrupar")
         return;
     } 
 
@@ -231,10 +234,10 @@ function carregarListaMainDeContasAgrupada(arrayContas){
 
     lista.innerHTML = "";
 
-    console.log(arrayContas)
+    // console.log(arrayContas)
 
     arrayContas.forEach(contas =>{
-        console.log(contas)
+        // console.log(contas)
         if(contas.contas == undefined){
             lista.innerHTML += `
                 <div>

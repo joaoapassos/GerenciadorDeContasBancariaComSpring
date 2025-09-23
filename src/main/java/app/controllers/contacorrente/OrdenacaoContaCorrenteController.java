@@ -1,4 +1,4 @@
-package app.controllers.services;
+package app.controllers.contacorrente;
 
 import app.model.contas.ContaCorrente;
 import app.services.conta.*;
@@ -16,6 +16,8 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+//Classe resposavel por gerenciar as rotas que o frontend utiliza para ordenar as contas usando o metodo ordenar de ContaCorrenteService
 
 @RestController
 @RequestMapping("/api/services/corrente/order")
@@ -36,7 +38,6 @@ public class OrdenacaoContaCorrenteController {
         else throw new OrdenacaoNaoExistenteException("Ordenação escolhida não existe");
 
         
-        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.ordenar(ordenacao, contas);  
     }
 }

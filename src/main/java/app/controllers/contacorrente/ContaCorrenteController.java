@@ -1,4 +1,4 @@
-package app.controllers.contas;
+package app.controllers.contacorrente;
 
 import app.enums.TarifaEnum;
 import app.exception.SaldoInsuficienteException;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+//Classe responsavel por gerenciar as rotas que o frontend se comunica com relação a conta corrente (ações como cadastro, listagem, entre outras)
 
 @RestController
 @RequestMapping("/api/contas/corrente")
@@ -31,6 +33,13 @@ public class ContaCorrenteController {
     public ContaCorrente getContaById(@PathVariable int id){
         return contaCorrenteService.buscarContaPorId(id);
     }
+
+    @GetMapping("/saldototal")
+    public BigDecimal getMethodName() {
+        List<ContaCorrente> contas = contaCorrenteService.carregarContas();
+        return contaCorrenteService.saldoTotalDasContas(contas);
+    }
+    
 
     @PostMapping("/acessar")
     public ContaCorrente loginConta(@RequestBody ContaCorrente conta){
@@ -68,10 +77,11 @@ public class ContaCorrenteController {
     }
 
     @PostMapping("/transacao")
-    public ResponseEntity transacaoSaldo(@RequestBody ArrayList<ContaCorrente> contas, @RequestParam double valor) throws SaldoInsuficienteException{
-              
+    public ResponseEntity transacaoSaldo(@RequestBody ArrayList<Integer> numeros, @RequestParam double valor) throws SaldoInsuficienteException{
+        int numeroOrigem = numeros.get(0);
+        int numeroDestino = numeros.get(1);
         try{
-            contaCorrenteService.transacao(contas, BigDecimal.valueOf(valor));
+            contaCorrenteService.transacao(numeroOrigem, numeroDestino, BigDecimal.valueOf(valor));
             return ResponseEntity.ok("Transação feita com exito");
         }
         catch(SaldoInsuficienteException e){

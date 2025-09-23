@@ -1,4 +1,4 @@
-package app.controllers.services;
+package app.controllers.contacorrente;
 
 
 import app.model.contas.ContaCorrente;
@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//Classe resposavel por gerenciar as rotas que o frontend utiliza para filtrar as contas usando o metodo filtrar de ContaCorrenteService
+
 @RestController
 @RequestMapping("/api/services/corrente/filter")
 public class FiltroContaCorrenteController {
@@ -40,7 +42,6 @@ public class FiltroContaCorrenteController {
         }
         else throw new FiltroNaoExistenteException("Filtro escolhido não existe");
 
-        // List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.filtrar(filtro, contas);
     }
 }
