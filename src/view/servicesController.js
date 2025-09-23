@@ -53,8 +53,8 @@ async function aplicarFiltro(e) {
     if(response.status !== 200){
         const error = await response.json();
         console.log("Erro ao filtrar as contas")
-        console.error("Erro: " + error);
-        alert("Erro ao filtrar")
+        console.error("Erro: " + error.message);
+        alert("Erro ao filtrar\nDetalhes do erro: " + error.message)
         return;
     }
 
@@ -115,8 +115,8 @@ async function aplicarOrdenacao(e) {
     if(response.status !== 200){
         const error = await response.json();
         console.log("Erro ao ordenar as contas")
-        console.error("Erro: " + error);
-        alert("Erro ao ordenar")
+        console.error("Erro: " + error.message);
+        alert("Erro ao ordenar\nDetalhes do erro: " + error.message)
         return;
     }
 
@@ -215,7 +215,7 @@ async function aplicarAgrupamento(e) {
         const error = await response.json();
         console.log("Erro ao agrupar as contas")
         console.error("Erro: " + error);
-        alert("Erro ao agrupar")
+        alert("Erro ao agrupar\nDetalhes do erro: " + error.message)
         return;
     } 
 

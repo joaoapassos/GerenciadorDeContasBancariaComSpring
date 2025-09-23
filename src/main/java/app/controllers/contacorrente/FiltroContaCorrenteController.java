@@ -9,7 +9,6 @@ import app.exception.FiltroRequerParametroException;
 import app.interfaces.FiltroInterface;
 import app.services.conta.ContaCorrenteService;
 import app.services.filtro.FiltroByNumberPar;
-import app.services.filtro.FiltroBySaldoMaiorQ;
 import app.exception.*;
 import app.interfaces.*;
 import app.services.filtro.*;
@@ -32,16 +31,29 @@ public class FiltroContaCorrenteController {
     }
 
     @PostMapping("/{typeFilter}")
-    public List<ContaCorrente> filtrar(@PathVariable String typeFilter, @RequestBody List<ContaCorrente> contas, @RequestParam(required = false) BigDecimal saldoMin) throws FiltroNaoExistenteException, FiltroRequerParametroException{
+    public List<ContaCorrente> filtrar(@PathVariable String typeFilter, 
+        @RequestBody List<ContaCorrente> contas, 
+        @RequestParam(required = false) BigDecimal saldoMin) 
+        throws FiltroNaoExistenteException, FiltroRequerParametroException {
+
         FiltroInterface filtro;
 
-        if("FiltroByNumberPar".equals(typeFilter)) filtro = new FiltroByNumberPar();
-        else if("FiltroBySaldoMaiorQ".equals(typeFilter)) {
-            if(saldoMin == null) throw new FiltroRequerParametroException("Saldo não informado");
-            else filtro = new FiltroBySaldoMaiorQ(saldoMin);
+        if ("FiltroBySaldoMaiorQ".equals(typeFilter)) {
+            if (saldoMin == null) {
+                throw new FiltroRequerParametroException("Para o filtro escolhido informar o saldo mínimo é obrigatório.");
+            }
+            if (saldoMin.compareTo(BigDecimal.ZERO) < 0) {
+                throw new FiltroRequerParametroException("Saldo negativo é inválido, forneça um saldo mínimo válido.");
+            }
+            filtro = new FiltroBySaldoMaiorQ(saldoMin);
+
+        } else if ("FiltroByNumberPar".equals(typeFilter)) {
+            filtro = new FiltroByNumberPar();
+
+        } else {
+            throw new FiltroNaoExistenteException("Filtro escolhido não existe");
         }
-        else throw new FiltroNaoExistenteException("Filtro escolhido não existe");
 
         return contaCorrenteService.filtrar(filtro, contas);
-    }
+}
 }

@@ -21,6 +21,7 @@ public class FiltroBySaldoMaiorQ implements FiltroInterface{
 
     @Override
     public List<Conta> aplicar(List<Conta> contas){
+        
         Predicate<Conta> filtro = f -> f.getSaldo().doubleValue() >= this.value;
         
         return contas.stream().filter(filtro).collect(Collectors.toList());

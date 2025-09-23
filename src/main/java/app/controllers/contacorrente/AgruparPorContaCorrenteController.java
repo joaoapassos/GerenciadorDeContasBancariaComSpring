@@ -40,6 +40,7 @@ public class AgruparPorContaCorrenteController {
 
         if("AgruparContasPorFaixaDeSaldo".equals(typeGroupBy)) {
             if(min == null || max == null) throw new AgruparPorRequerParametroException("Saldo min e saldo max nao informados");
+            else if(min.compareTo(BigDecimal.ZERO) < 0 || max.compareTo(BigDecimal.ZERO) < 0)  throw new AgruparPorRequerParametroException("Saldo min e saldo max são inválidos, informe valores positivos");
             else agruparPor = new AgruparContasPorFaixaDeSaldo(min, max);
         }
         else if("AgruparContasPorSaldo".equals(typeGroupBy)) agruparPor = new AgruparContasPorSaldo();

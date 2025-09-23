@@ -36,8 +36,8 @@
                     </form>
                 </section>
                 <section id="aside-transacao" style="display: none;">
-                    <h4>Transação</h4>
-                    <form id="trasacao" onsubmit="transacao(event)">
+                    <h4>Transferir</h4>
+                    <form id="trasacao" onsubmit="transferir(event)">
                         <div>
                             <input type="number" placeholder="Valor" name="valor">
                             <div>
@@ -54,9 +54,9 @@
 
             <button id="sair-conta" onclick="voltarListaDeContas(), limparLocalStorageConta()">Sair</button>
             <button id="deletar-conta" onclick="deletarConta()">Deletar conta</button>
-            <button id="sacar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Sacar</button>
-            <button id="depositar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Depositar</button>
-            <button id="transacao" class="btn-menu-conta" onclick="abrirMenuServices(this)">Transação</button>
+            <button id="btn-sacar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Sacar</button>
+            <button id="btn-depositar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Depositar</button>
+            <button id="btn-transacao" class="btn-menu-conta" onclick="abrirMenuServices(this)">Transferir</button>
             
             <div class="title" style="margin-top: 50px; flex-direction: column; align-items: start; gap: 10px;">
                 <p style="margin-left: 20px;" id="id-conta">ID#0000</p>

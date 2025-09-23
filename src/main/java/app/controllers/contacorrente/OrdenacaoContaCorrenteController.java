@@ -30,7 +30,10 @@ public class OrdenacaoContaCorrenteController {
 
 
     @PostMapping("/{typeOrdenacao}")
-    public List<ContaCorrente> ordenar(@PathVariable String typeOrdenacao, @RequestBody List<ContaCorrente> contas) throws OrdenacaoNaoExistenteException{
+    public List<ContaCorrente> ordenar(@PathVariable String typeOrdenacao, 
+        @RequestBody List<ContaCorrente> contas) 
+        throws OrdenacaoNaoExistenteException{
+            
         OrdenacaoInterface ordenacao;
 
         if("OrdenacaoByName".equals(typeOrdenacao)) ordenacao = new OrdenacaoByName();

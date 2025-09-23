@@ -103,11 +103,6 @@ main{
             #cadastrar-acessar{
                 margin: auto;
             }
-
-            .btn-services-active{
-                color: var(--background);
-                background-color: var(--color);
-            }
         }
         .contas{
             height: 240px;
@@ -264,4 +259,9 @@ footer{
         }
 
     }
+}
+
+.btn-services-active{
+    color: var(--background);
+    background-color: var(--color);
 }

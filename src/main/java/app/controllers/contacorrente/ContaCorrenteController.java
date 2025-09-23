@@ -1,17 +1,19 @@
 package app.controllers.contacorrente;
 
 import app.enums.TarifaEnum;
+import app.exception.ContaInexistenteException; // Supondo que você tenha esta exceção
 import app.exception.SaldoInsuficienteException;
 import app.model.contas.ContaCorrente;
-import app.services.conta.*;
+import app.services.conta.ContaCorrenteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 //Classe responsavel por gerenciar as rotas que o frontend se comunica com relação a conta corrente (ações como cadastro, listagem, entre outras)
 
@@ -25,76 +27,76 @@ public class ContaCorrenteController {
     }
     
     @GetMapping
-    public List<ContaCorrente> getManyContas(){
+    public List<ContaCorrente> getManyContas() throws SQLException{
         return contaCorrenteService.carregarContas();
     }
 
     @GetMapping("/{id}")
-    public ContaCorrente getContaById(@PathVariable int id){
+    public ContaCorrente getContaById(@PathVariable int id) throws ContaInexistenteException, SQLException {
         return contaCorrenteService.buscarContaPorId(id);
     }
 
     @GetMapping("/saldototal")
-    public BigDecimal getMethodName() {
+    public BigDecimal saldoTotalDasContas() {
         List<ContaCorrente> contas = contaCorrenteService.carregarContas();
         return contaCorrenteService.saldoTotalDasContas(contas);
     }
     
-
     @PostMapping("/acessar")
-    public ContaCorrente loginConta(@RequestBody ContaCorrente conta){
-        return contaCorrenteService.loginConta(conta);
+    public ContaCorrente loginConta(@RequestBody Map<String, Object> acesso) throws ContaInexistenteException, SQLException {
+        String email = "";
+        String senha = "";
+        if(acesso.containsKey("email")) email = (String) acesso.get("email");
+        if(acesso.containsKey("senha")) senha = (String) acesso.get("senha");
+        
+        return contaCorrenteService.loginConta(email, senha);
     }
 
     @PostMapping("/cadastro")
-    public void postConta(@RequestBody ContaCorrente newConta){
+    public ResponseEntity<String> postConta(@RequestBody ContaCorrente newConta) throws SQLException{
         contaCorrenteService.cadastrarConta(newConta);
+        return ResponseEntity.ok("Conta cadastrada com sucesso.");
     }
 
     @PutMapping
-    public void putConta(@RequestBody ContaCorrente conta){
+    public ResponseEntity<String> putConta(@RequestBody ContaCorrente conta) throws SQLException{
         contaCorrenteService.atualizarConta(conta);
+        return ResponseEntity.ok("Conta atualizada com sucesso.");
     }
 
-    @PutMapping("/sacar")
-    public ResponseEntity sacarSaldo(@RequestBody ContaCorrente conta, @RequestParam double valor){
-        try{
-            contaCorrenteService.sacarValor(conta, BigDecimal.valueOf(valor), TarifaEnum.ISENTA);
-            return ResponseEntity.ok("Saque feita com exito");
-        }
-        catch(SaldoInsuficienteException e){
-            System.out.println("Saldo insuficiente para saque");
-            Map<String, String> erro = Map.of("erro", "Saldo insuficiente para saque");
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(erro);
-        }
+    @PostMapping("/sacar/{id}")
+    public ResponseEntity<String> sacarSaldo(@PathVariable int id, @RequestParam BigDecimal valor) throws SaldoInsuficienteException, ContaInexistenteException, SQLException {
+        contaCorrenteService.sacarValor(id, valor, TarifaEnum.ISENTA);
+        return ResponseEntity.ok("Saque feito com êxito");
     }
 
-    @PutMapping("/depositar")
-    public void depositarSaldo(@RequestBody ContaCorrente conta, @RequestParam double valor){
-        contaCorrenteService.depositarValor(conta, BigDecimal.valueOf(valor));
+    @PostMapping("/depositar/{id}")
+    public ResponseEntity<String> depositarSaldo(@PathVariable int id, @RequestParam BigDecimal valor) throws ContaInexistenteException, SQLException {
+        contaCorrenteService.depositarValor(id, valor);
+        return ResponseEntity.ok("Depósito feito com êxito.");
     }
 
-    @PostMapping("/transacao")
-    public ResponseEntity transacaoSaldo(@RequestBody ArrayList<Integer> numeros, @RequestParam double valor) throws SaldoInsuficienteException{
-        int numeroOrigem = numeros.get(0);
-        int numeroDestino = numeros.get(1);
-        try{
-            contaCorrenteService.transacao(numeroOrigem, numeroDestino, BigDecimal.valueOf(valor));
-            return ResponseEntity.ok("Transação feita com exito");
+    @PostMapping("/transferir")
+    public ResponseEntity<String> transferir(@RequestBody Map<String, Object> transacao) throws SaldoInsuficienteException, ContaInexistenteException, SQLException {
+        if (!transacao.containsKey("contaOrigem") || !transacao.containsKey("contaDestino") || !transacao.containsKey("valor")) {
+            // Lançamos um erro de argumento inválido que o handler genérico pode pegar.
+            throw new IllegalArgumentException("Dados da transação incompletos. 'contaOrigem', 'contaDestino' e 'valor' são obrigatórios.");
         }
-        catch(SaldoInsuficienteException e){
-            System.out.println("Saldo insuficiente para transação");
-            Map<String, String> erro = Map.of("erro", e.getMessage());
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(erro);
-        }
+
+        int origem = Integer.parseInt(transacao.get("contaOrigem").toString());
+        int destino = Integer.parseInt(transacao.get("contaDestino").toString());
+
+        Number valorRecebido = (Number) transacao.get("valor");
+        BigDecimal valor = BigDecimal.valueOf(valorRecebido.doubleValue());
+
+        contaCorrenteService.transferir(origem, destino, valor);
+
+        return ResponseEntity.ok("Transação feita com êxito");
     }
 
-    @DeleteMapping
-    public void deleteConta(@RequestBody ContaCorrente conta){
-        contaCorrenteService.deletarConta(conta);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteConta(@PathVariable int id) throws ContaInexistenteException {
+        contaCorrenteService.deletarConta(id);
+        return ResponseEntity.noContent().build();
     }
 }

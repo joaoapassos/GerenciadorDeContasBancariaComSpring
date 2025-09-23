@@ -29,17 +29,19 @@ function voltarListaDeContas(){
 
 function abrirMenuServices(e){
     const aside = document.getElementById("menu-services");
-    if(aside.style.display == "block") fecharMenuServices();
-    e.classList.add("btn-services-active");
     let service;
-    if(e.innerText == "Filtrar") service = "aside-filtro";
-    else if(e.innerText == "Ordenar") service = "aside-ordenacao";
-    else if(e.innerText == "Agrupar") service = "aside-agrupar";
-    else if(e.innerText == "Sacar") service = "aside-sacar";
-    else if(e.innerText == "Depositar") service = "aside-depositar";
-    else if(e.innerText == "Transação") service = "aside-transacao";
-
-    const asideService = document.getElementById(service);
+    if(e.innerText == "Filtrar") service = "filtro";
+    else if(e.innerText == "Ordenar") service = "ordenacao";
+    else if(e.innerText == "Agrupar") service = "agrupar";
+    else if(e.innerText == "Sacar") service = "sacar";
+    else if(e.innerText == "Depositar") service = "depositar";
+    else if(e.innerText == "Transferir") service = "transacao";
+    
+    if(aside.style.display == "block") fecharMenuServices(service);
+    
+    e.classList.add("btn-services-active");
+    
+    const asideService = document.getElementById("aside-" + service);
 
 
     aside.style.display = "block";
@@ -54,13 +56,25 @@ function abrirMenuServices(e){
     })
 }
 
-function fecharMenuServices(){
-    document.getElementById("aside-filtro").style.display = "none";
-    document.getElementById("aside-ordenacao").style.display = "none";
-    document.getElementById("aside-agrupar").style.display = "none";
-    document.getElementById("btn-filtrar").classList.remove("btn-services-active");
-    document.getElementById("btn-ordenar").classList.remove("btn-services-active");
-    document.getElementById("btn-agrupar").classList.remove("btn-services-active");
+function fecharMenuServices(service){
+
+    if(service == "filtro" || service == "ordenacao" || service == "agrupar"){
+        document.getElementById("aside-filtro").style.display = "none";
+        document.getElementById("aside-ordenacao").style.display = "none";
+        document.getElementById("aside-agrupar").style.display = "none";
+        document.getElementById("btn-filtrar").classList.remove("btn-services-active");
+        document.getElementById("btn-ordenar").classList.remove("btn-services-active");
+        document.getElementById("btn-agrupar").classList.remove("btn-services-active");
+    }
+    else{
+        document.getElementById("aside-sacar").style.display = "none";
+        document.getElementById("aside-depositar").style.display = "none";
+        document.getElementById("aside-transacao").style.display = "none";
+        document.getElementById("btn-sacar").classList.remove("btn-services-active");
+        document.getElementById("btn-depositar").classList.remove("btn-services-active");
+        document.getElementById("btn-transacao").classList.remove("btn-services-active");
+    }
+
 }
 
 function salvarLocalStorageConta(conta){

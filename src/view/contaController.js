@@ -35,40 +35,36 @@ async function acessarConta(e) {
     const form = e.target;
     // console.log(form)
     
-    let conta = {
-        numero: 0,
-        titular: "",
+    let acesso = {
         email: form.email.value,
         senha: form.senha.value,
-        saldo: 0.0
     }
 
     // console.log(conta)
+    try{
+        const response = await fetch(`${urlServe}/api/contas/corrente/acessar`, {
+            method: "POST",
+            body: JSON.stringify(acesso),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
 
-    const response = await fetch(`${urlServe}/api/contas/corrente/acessar`, {
-        method: "POST",
-        body: JSON.stringify(conta),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-
-    const data = await response.json()
+        const data = await response.json()
     
-    if(response.status !== 200){
-        const error = await response.json();
+        const login = data || {};
+
+        salvarLocalStorageConta(login);
+
+        console.log("Conta Acessada!!!");
+        window.location.href = "conta.html";
+    }
+    catch(error){
         console.log("Erro ao acessar a conta")
-        console.error("Erro: " + error);
-        alert("Erro ao acessar conta: Email ou senha incorretos\nTente novamente!")
+        console.error("Erro: " + error.message);
+        alert("Erro ao acessar conta\nDetalhes do erro: " + error.message)
         return;
     }
-    
-    const login = data || {};
-
-    salvarLocalStorageConta(login);
-
-    console.log("Conta Acessada!!!");
-    window.location.href = "conta.html";
 }
 
 async function carregarConta(){
@@ -77,25 +73,25 @@ async function carregarConta(){
     conta = JSON.parse(conta);
     // console.log(conta)
 
-    const response = await fetch(`${urlServe}/api/contas/corrente/${conta.numero}`, {
-        method: "GET"
-    })
-    
-    const data = await response.json();
+    try{
+        const response = await fetch(`${urlServe}/api/contas/corrente/${conta.numero}`, {
+            method: "GET"
+        })
 
-    if(response.status !== 200){
-        const error = await response.json();
+        const data = await response.json();
+    
+        salvarLocalStorageConta(data);
+
+        console.log("Conta carregada com sucesso!")
+
+        return data;
+
+    }catch(error){
         console.log("Erro ao acessar a conta")
-        console.error("Erro: " + error);
+        console.error("Erro: " + error.message);
         alert("Erro ao acessar conta")
         return;
     }
-    
-    salvarLocalStorageConta(data);
-
-    console.log("Conta carregada com sucesso!")
-
-    return data;
 }
 
 async function carregarDadosConta(){
@@ -114,23 +110,22 @@ async function carregarDadosConta(){
 }
 
 async function carregarContas() {
-    const response = await fetch(`${urlServe}/api/contas/corrente`, {
-        method: "GET"
-    })
-    
-    const data = await response.json();
+    try{
+        const response = await fetch(`${urlServe}/api/contas/corrente`, {
+            method: "GET"
+        })
+        
+        const data = await response.json();
 
-    if(response.status !== 200){
-        const error = await response.json();
+        console.log("Contas carregadas com sucesso!")
+
+        return data;
+    }catch(error){
         console.log("Erro ao acessar a conta")
-        console.error("Erro: " + error);
-        alert("Erro ao carregar contas")
+        console.error("Erro: " + error.message);
+        alert("Erro ao acessar contas\nDetalhes do erro: " + error.message)
         return;
     }
-    
-    console.log("Contas carregadas com sucesso!")
-
-    return data;
 }
 
 async function carregarListaMainDeContas(contas) {
@@ -176,26 +171,24 @@ async function deletarConta() {
 
     const conta = JSON.parse(localStorage.getItem("Conta"));
 
-    const response = await fetch(`${urlServe}/api/contas/corrente`, {
-        method: "DELETE",
-        body: JSON.stringify(conta),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    
-    if(response.status !== 200){
-        const error = await response.json();
+    try{
+        await fetch(`${urlServe}/api/contas/corrente`, {
+            method: "DELETE",
+            body: JSON.stringify(conta.numero),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        alert("Conta deletada com sucesso!")
+
+        limparLocalStorageConta();
+        voltarListaDeContas();
+    }catch(error){
         console.log("Erro ao deletar a conta")
-        console.error("Erro: " + error);
-        alert("Erro ao deletar conta\nTente novamente!")
+        console.error("Erro: " + error.message);
+        alert("Erro ao deletar conta\nDetalhes do erro: " + error.message)
         return;
     }
-
-    alert("Conta deletada com sucesso!")
-
-    limparLocalStorageConta();
-    voltarListaDeContas();
 }
 
 async function updateConta(e) {
@@ -211,25 +204,25 @@ async function updateConta(e) {
         saldo : conta.saldo
     }
 
-    const response = await fetch(`${urlServe}/api/contas/corrente`, {
-        method: "PUT",
-        body: JSON.stringify(conta),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
+    try{
+        await fetch(`${urlServe}/api/contas/corrente`, {
+            method: "PUT",
+            body: JSON.stringify(conta),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
     
-    if(response.status !== 200){
-        const error = await response.json();
-        console.log("Erro ao deletar a conta")
-        console.error("Erro: " + error);
-        alert("Erro ao atualizar contaa\nTente novamente!")
-        return;
+        console.log("Conta atualizada com sucesso!")
+
+        salvarLocalStorageConta(conta);
     }
-
-    console.log("Conta atualizada com sucesso!")
-
-    salvarLocalStorageConta(conta);
+    catch(error){
+        console.log("Erro ao deletar a conta")
+        console.error("Erro: " + error.message);
+        alert("Erro ao atualizar conta\nDetalhes do erro: " + error.message)
+        return;
+    }    
 }
 
 async function sacar(e) {
@@ -238,9 +231,8 @@ async function sacar(e) {
     const form = e.target;
     // console.log(form.valor.value)
 
-    const response = await fetch(`${urlServe}/api/contas/corrente/sacar?valor=${form.valor.value}`, {
-        method: "PUT",
-        body: JSON.stringify(conta),
+    const response = await fetch(`${urlServe}/api/contas/corrente/sacar/${conta.numero}?valor=${form.valor.value}`, {
+        method: "POST",
         headers: {
             "Content-Type": "application/json"
         }
@@ -249,8 +241,8 @@ async function sacar(e) {
     if(response.status !== 200){
         const error = await response.json();
         console.log("Erro ao sacar saldo da conta")
-        console.error("Erro: " + error.erro);
-        alert("Erro ao sacar saldo da conta\nErro: " + error.erro)
+        console.error("Erro: " + error.message);
+        alert("Erro ao sacar saldo da conta\nErro: " + error.message)
         return;
     }
     
@@ -265,55 +257,59 @@ async function depositar(e) {
     const form = e.target;
     console.log(form.valor.value)
 
-    const response = await fetch(`${urlServe}/api/contas/corrente/depositar?valor=${form.valor.value}`, {
-        method: "PUT",
-        body: JSON.stringify(conta),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-
-    if(response.status !== 200){
-        const error = await response.json();
+    try{
+        await fetch(`${urlServe}/api/contas/corrente/depositar/${conta.numero}?valor=${form.valor.value}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        salvarLocalStorageConta(conta);
+    
+        window.location.reload();
+    }
+    catch(error){
         console.log("Erro ao depositar saldo da conta")
         console.error("Erro: " + error);
         alert("Erro ao depositar saldo da conta\nErro: " + error)
         return;
     }
-  
-    salvarLocalStorageConta(conta);
-
-    window.location.reload();
 }
 
 async function getContaById(id){
-    const response = await fetch(`${urlServe}/api/contas/corrente/${id}`, {
-        method: "GET"
-    })
-    
-    if(response.status !== 200){
-        const error = await response.json();
+    try{
+        return await fetch(`${urlServe}/api/contas/corrente/${id}`, {
+            method: "GET"
+        }).json();
+    }
+    catch(error){
         console.log("Erro ao buscar conta")
         console.error("Erro: " + error);
         alert("Erro ao buscar conta\nErro: " + error)
         return;
     }
 
-    return await response.json();
 }
 
-async function transacao(e) {
+async function transferir(e) {
     e.preventDefault();
     let conta = JSON.parse(localStorage.getItem("Conta"));
     const form = e.target;
 
     const contaDestino = form.contas.value;
 
-    const contas = [conta.numero, contaDestino]
+    if(contaDestino == "null") return alert("Selecione uma conta de destino!");
+    if(+form.valor.value <= 0) return alert("Valor de transferência inválido, por favor transfira um valor maior ou igual R$ 1,00")
 
-    const response = await fetch(`${urlServe}/api/contas/corrente/transacao?valor=${form.valor.value}`, {
+    const transacao = {
+        contaOrigem : +conta.numero,
+        contaDestino : +contaDestino,
+        valor : +form.valor.value
+    }
+    console.log(transacao)
+    const response = await fetch(`${urlServe}/api/contas/corrente/transferir`, {
         method: "POST",
-        body: JSON.stringify(contas),
+        body: JSON.stringify(transacao),
         headers: {
             "Content-Type": "application/json"
         }
@@ -323,8 +319,8 @@ async function transacao(e) {
     if(response.status !== 200){
         const error = await response.json();
         console.log("Erro realizar transação")
-        console.error("Erro: " + error);
-        alert("Erro realizar transação\nErro: " + error.erro)
+        console.error("Erro: " + error.message);
+        alert("Erro realizar transação\nErro: " + error.message)
         return;
     }
 
@@ -332,21 +328,19 @@ async function transacao(e) {
 }
 
 async function carregarTotalDeSaldoDasContas(){
-    const response = await fetch(`${urlServe}/api/contas/corrente/saldototal`, {
-        method: "GET"
-    })
-    
-    const data = await response.json();
-
-    if(response.status !== 200){
-        const error = await response.json();
+    try{
+        const response = await fetch(`${urlServe}/api/contas/corrente/saldototal`, {
+            method: "GET"
+        })
+        const data = await response.json();
+        
+        document.getElementById("total-contas").innerText = "Total: R$" + parseFloat(data);
+        document.getElementById("total-contas").title = "Saldo total de todas as contas cadastradas R$" + parseFloat(data);
+    }
+    catch(error){
         console.log("Erro ao acessar a conta")
         console.error("Erro: " + error);
         return;
     }
     
-    // console.log(data)
-
-    document.getElementById("total-contas").innerText = "Total: R$" + parseFloat(data);
-    document.getElementById("total-contas").title = "Saldo total de todas as contas cadastradas R$" + parseFloat(data);
 }

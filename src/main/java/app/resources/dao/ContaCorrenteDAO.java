@@ -1,10 +1,12 @@
 package app.resources.dao;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.exception.ContaInexistenteException;
+import app.exception.SaldoInsuficienteException;
 import app.model.contas.ContaCorrente;
 import app.services.conta.ContaCorrenteService;
 
@@ -50,7 +52,7 @@ public class ContaCorrenteDAO {
             return contas;
     }
 
-    public ContaCorrente selectById(int id){
+    public ContaCorrente selectById(int id)  throws ContaInexistenteException{
         ContaCorrente conta = null;
         String sql = "SELECT * FROM contas WHERE id = ?";
         try (Connection conn = Conexao.getConnection();
@@ -69,6 +71,7 @@ public class ContaCorrenteDAO {
             }
         } catch (SQLException e) {
             System.err.println("\n\nErro ao buscar conta\n\nDetalhes do erro: " + e.getMessage());
+            throw new ContaInexistenteException("Id não existe");
         }
         return conta;
     }
@@ -113,7 +116,7 @@ public class ContaCorrenteDAO {
         }
     }
 
-    public ContaCorrente loginConta(String email, String senha){
+    public ContaCorrente loginConta(String email, String senha)  throws ContaInexistenteException{
         ContaCorrente conta = null;
         String sql = "SELECT * FROM contas WHERE email = ? AND senha = ?";
         try (Connection conn = Conexao.getConnection();
@@ -133,7 +136,41 @@ public class ContaCorrenteDAO {
             }
         } catch (SQLException e) {
             System.err.println("\n\nErro ao realizar login\n\nDetalhes do erro: " + e.getMessage());
+            throw new ContaInexistenteException("Email ou senha inválidos");
         }
         return conta;
+    }
+
+    public void transferir(int idOrigem, int idDestino, BigDecimal valor) throws ContaInexistenteException, SaldoInsuficienteException{
+        String contaOrigem = "UPDATE contas SET saldo = saldo - ? WHERE id = ?";
+        String contaDestino = "UPDATE contas SET saldo = saldo + ? WHERE id = ?";
+
+        try (Connection conn = Conexao.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement origem = conn.prepareStatement(contaOrigem);
+                 PreparedStatement destino = conn.prepareStatement(contaDestino)) {
+
+                origem.setDouble(1, valor.doubleValue());
+                origem.setInt(2, idOrigem);
+                origem.executeUpdate();
+
+                destino.setDouble(1, valor.doubleValue());
+                destino.setInt(2, idDestino);
+                destino.executeUpdate();
+
+                conn.commit();
+                System.out.println("Transferência realizada com sucesso!");
+
+            } catch (SQLException e) {
+                conn.rollback();
+                System.err.println("Erro na transação. Rollback realizado!");
+                System.out.println("Erro ao transferir\n\nDetalhes do erro: " + e.getMessage());
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao transferir\n\nDetalhes do erro: " + e.getMessage());
+        }
     }
 }
