@@ -3,6 +3,7 @@ package app.controllers.contacorrente;
 import app.enums.TarifaEnum;
 import app.exception.ContaInexistenteException; // Supondo que você tenha esta exceção
 import app.exception.SaldoInsuficienteException;
+import app.model.Movimentacao;
 import app.model.contas.ContaCorrente;
 import app.services.conta.ContaCorrenteService;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,13 +29,13 @@ public class ContaCorrenteController {
     }
     
     @GetMapping
-    public List<ContaCorrente> getManyContas() throws SQLException{
+    public List<ContaCorrente> carregarContas() throws SQLException{
         return contaCorrenteService.carregarContas();
     }
 
-    @GetMapping("/{id}")
-    public ContaCorrente getContaById(@PathVariable int id) throws ContaInexistenteException, SQLException {
-        return contaCorrenteService.buscarContaPorId(id);
+    @GetMapping("/{numero}")
+    public ContaCorrente buscarContaPorNumero(@PathVariable int numero) throws ContaInexistenteException, SQLException {
+        return contaCorrenteService.buscarContaPorNumero(numero);
     }
 
     @GetMapping("/saldototal")
@@ -64,15 +66,15 @@ public class ContaCorrenteController {
         return ResponseEntity.ok("Conta atualizada com sucesso.");
     }
 
-    @PostMapping("/sacar/{id}")
-    public ResponseEntity<String> sacarSaldo(@PathVariable int id, @RequestParam BigDecimal valor) throws SaldoInsuficienteException, ContaInexistenteException, SQLException {
-        contaCorrenteService.sacarValor(id, valor, TarifaEnum.ISENTA);
+    @PostMapping("/sacar/{numero}")
+    public ResponseEntity<String> sacarSaldo(@PathVariable int numero, @RequestParam BigDecimal valor) throws SaldoInsuficienteException, ContaInexistenteException, SQLException {
+        contaCorrenteService.sacarValor(numero, valor, TarifaEnum.ISENTA);
         return ResponseEntity.ok("Saque feito com êxito");
     }
 
-    @PostMapping("/depositar/{id}")
-    public ResponseEntity<String> depositarSaldo(@PathVariable int id, @RequestParam BigDecimal valor) throws ContaInexistenteException, SQLException {
-        contaCorrenteService.depositarValor(id, valor);
+    @PostMapping("/depositar/{numero}")
+    public ResponseEntity<String> depositarSaldo(@PathVariable int numero, @RequestParam BigDecimal valor) throws ContaInexistenteException, SQLException {
+        contaCorrenteService.depositarValor(numero, valor);
         return ResponseEntity.ok("Depósito feito com êxito.");
     }
 
@@ -94,9 +96,20 @@ public class ContaCorrenteController {
         return ResponseEntity.ok("Transação feita com êxito");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteConta(@PathVariable int id) throws ContaInexistenteException {
-        contaCorrenteService.deletarConta(id);
+    @DeleteMapping("/{numero}")
+    public ResponseEntity<Void> deleteConta(@PathVariable int numero) throws ContaInexistenteException {
+        contaCorrenteService.deletarConta(numero);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/listarMovimentacoes/{numero}")
+    public List<Movimentacao> listarExtrato(@PathVariable int numero) throws SQLException{
+        return contaCorrenteService.listarExtrato(numero);
+    }
+
+    @PostMapping("/gerarExtrato/{numero}")
+    public ResponseEntity<Void> gerarExtrato(@PathVariable int numero) throws SQLException, IOException{
+        contaCorrenteService.gerarExtrato(numero);
         return ResponseEntity.noContent().build();
     }
 }

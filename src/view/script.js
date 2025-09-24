@@ -133,3 +133,11 @@ themeToggleBtn.addEventListener('click', () => {
     }
 });
 }
+
+function irParaMovimentacoes(){
+    window.location.href = "movimentacoes.html"
+}
+
+function voltarParaContas(){
+    window.location.href = "conta.html"
+}

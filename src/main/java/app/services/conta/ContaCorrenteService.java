@@ -2,18 +2,21 @@ package app.services.conta;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import app.enums.RegistroOperacoesEnum;
 import app.enums.TarifaEnum;
 import app.exception.*;
 import app.interfaces.AgruparPorInterface;
 import app.interfaces.FiltroInterface;
 import app.interfaces.OrdenacaoInterface;
+import app.model.Movimentacao;
 import app.model.contas.Conta;
 import app.model.contas.ContaCorrente;
-import app.exception.SaldoInsuficienteException;
 import app.model.contas.ContaCorrente;
 import app.exception.*;
 import app.resources.dao.ContaCorrenteDAO;
@@ -29,16 +32,15 @@ public class ContaCorrenteService {
         return contas.listar();
     }
 
-    //Receber email e senha e nao conta
     public ContaCorrente loginConta(String email, String senha) throws ContaInexistenteException{
         ContaCorrenteDAO dao = new ContaCorrenteDAO();
         
         return dao.loginConta(email, senha);
     }
 
-    public ContaCorrente buscarContaPorId(int id) throws ContaInexistenteException{
+    public ContaCorrente buscarContaPorNumero(int numero) throws ContaInexistenteException{
         ContaCorrenteDAO conta = new ContaCorrenteDAO();
-        return conta.selectById(id);
+        return conta.buscarContaPorNumero(numero);
     }
     
     public void cadastrarConta(ContaCorrente novaConta){
@@ -53,11 +55,11 @@ public class ContaCorrenteService {
         dao.atualizarConta(conta);
     }
 
-    public void deletarConta(int id){
+    public void deletarConta(int numero){
         
         ContaCorrenteDAO dao = new ContaCorrenteDAO();
 
-        dao.remover(id);
+        dao.remover(numero);
     }
 
     public void atualizarSaldo(ContaCorrente conta){
@@ -67,7 +69,7 @@ public class ContaCorrenteService {
     }
    
     public List<ContaCorrente> filtrar(FiltroInterface tipoFiltro, List<ContaCorrente> contas) throws FiltroNaoExistenteException, FiltroRequerParametroException{
-        if(tipoFiltro == null) throw new FiltroNaoExistenteException("Filtro escolhido não existe");
+        if(tipoFiltro == null) throw new FiltroNaoExistenteException("Filtro escolhnumeroo não existe");
 
         List<Conta> contasFiltro = new ArrayList<>(contas);
         contasFiltro = tipoFiltro.aplicar(contasFiltro);
@@ -133,33 +135,56 @@ public class ContaCorrenteService {
         
     }
 
-    public void sacarValor(int id, BigDecimal valor, TarifaEnum tarifa) throws SaldoInsuficienteException, ContaInexistenteException{
-        ContaCorrente conta = buscarContaPorId(id);
+    public void sacarValor(int numero, BigDecimal valor, TarifaEnum tarifa) throws SaldoInsuficienteException, ContaInexistenteException, SQLException{
+        ContaCorrente conta = buscarContaPorNumero(numero);
         
         conta.sacar(tarifa.aplicar(valor));
 
         atualizarSaldo(conta);
+        RegistroOperacoesEnum.SAQUE.registrar(numero, valor);
     }
 
-    public void depositarValor(int id, BigDecimal valor) throws ContaInexistenteException{
-        ContaCorrente conta = buscarContaPorId(id);
+    public void depositarValor(int numero, BigDecimal valor) throws ContaInexistenteException, SQLException{
+        ContaCorrente conta = buscarContaPorNumero(numero);
 
         conta.depositar(valor);
 
         atualizarSaldo(conta);
+
+        RegistroOperacoesEnum.DEPOSITO.registrar(numero, valor);
     }
 
-    public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor) throws SaldoInsuficienteException, ContaInexistenteException{
-        ContaCorrente contaOrigem = buscarContaPorId(numeroOrigem);
+    public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor) throws SaldoInsuficienteException, ContaInexistenteException, SQLException{
+        ContaCorrente contaOrigem = buscarContaPorNumero(numeroOrigem);
         if(contaOrigem.getSaldo().compareTo(valor) < 0) throw new SaldoInsuficienteException("Saldo insuficiente, não é possível realizar transação!");
 
         ContaCorrenteDAO dao = new ContaCorrenteDAO();
         
         dao.transferir(numeroOrigem, numeroDestino, valor);
+
+        RegistroOperacoesEnum.TRANSACAO.registrar(numeroOrigem, valor);
     }
 
     public BigDecimal saldoTotalDasContas(List<ContaCorrente> contas){
         Optional<BigDecimal> total =  contas.stream().map(ContaCorrente::getSaldo).reduce(BigDecimal::add);
         return total.orElse(BigDecimal.ZERO);
+    }
+
+    public List<Movimentacao> listarExtrato(int numero) throws SQLException{
+        ContaCorrenteDAO dao = new ContaCorrenteDAO();
+
+        return dao.listarExtrato(numero);
+    }
+
+    public void gerarExtrato(int numero) throws SQLException, IOException{
+        ContaCorrenteDAO dao = new ContaCorrenteDAO();
+        List<Movimentacao> movimentacoes = dao.listarExtrato(numero);
+
+        StringBuilder dados = new StringBuilder();
+        dados.append("ID | Numero | Tipo | Valor | Data\n");
+        for (Movimentacao m : movimentacoes) {
+            dados.append(m.toString()).append("\n");
+        }
+        Files.write(Paths.get("extrato_" + numero + ".txt"), dados.toString().getBytes());
     }
 }

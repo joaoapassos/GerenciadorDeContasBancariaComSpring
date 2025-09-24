@@ -7,6 +7,7 @@ import java.util.List;
 
 import app.exception.ContaInexistenteException;
 import app.exception.SaldoInsuficienteException;
+import app.model.Movimentacao;
 import app.model.contas.ContaCorrente;
 import app.services.conta.ContaCorrenteService;
 
@@ -36,7 +37,7 @@ public class ContaCorrenteDAO {
             {
                 while(rs.next()){
                     ContaCorrente c = new ContaCorrente(
-                        rs.getInt("id"),
+                        rs.getInt("numero"),
                         rs.getString("titular"),
                         rs.getString("email"),
                         rs.getString("senha"),
@@ -46,22 +47,22 @@ public class ContaCorrenteDAO {
                 }
             }
             catch(SQLException e){
-                System.out.println("\n\nErro ao listar contas\n\nDetalhes do erro: " + e.getSQLState());
+                System.out.println("\n\nErro ao listar contas\n\nDetalhes do erro: " + e.getSQLState() + "\n\nMais detalhes: " + e.getMessage());
             }
 
             return contas;
     }
 
-    public ContaCorrente selectById(int id)  throws ContaInexistenteException{
+    public ContaCorrente buscarContaPorNumero(int numero)  throws ContaInexistenteException{
         ContaCorrente conta = null;
-        String sql = "SELECT * FROM contas WHERE id = ?";
+        String sql = "SELECT * FROM contas WHERE numero = ?";
         try (Connection conn = Conexao.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, numero);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     conta = new ContaCorrente(
-                        rs.getInt("id"),
+                        rs.getInt("numero"),
                         rs.getString("titular"),
                         rs.getString("email"),
                         rs.getString("senha"),
@@ -71,13 +72,13 @@ public class ContaCorrenteDAO {
             }
         } catch (SQLException e) {
             System.err.println("\n\nErro ao buscar conta\n\nDetalhes do erro: " + e.getMessage());
-            throw new ContaInexistenteException("Id não existe");
+            throw new ContaInexistenteException("numero não existe");
         }
         return conta;
     }
 
     public void atualizarConta(ContaCorrente conta){
-        String sql = "UPDATE contas SET titular=?, email=?, senha=?, saldo=? WHERE id=?";
+        String sql = "UPDATE contas SET titular=?, email=?, senha=?, saldo=? WHERE numero=?";
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, conta.getTitular());
@@ -87,13 +88,13 @@ public class ContaCorrenteDAO {
             stmt.setInt(5, conta.getNumero());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("\n\nErro ao atualizar conta\n\nDetalhes do erro: " + e.getSQLState());
+            System.out.println("\n\nErro ao atualizar conta\n\nDetalhes do erro: " + e.getSQLState() + "\n\nMais detalhes: " + e.getMessage());
         }
 
     }
 
     public void atualizaSaldo(ContaCorrente conta){
-        String sql = "UPDATE contas SET saldo=? WHERE id=?";
+        String sql = "UPDATE contas SET saldo=? WHERE numero=?";
         try(Connection conn = Conexao.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
                 stmt.setDouble(1, conta.getSaldo().doubleValue());
@@ -101,18 +102,18 @@ public class ContaCorrenteDAO {
                 stmt.executeUpdate();
             }
             catch(SQLException e){
-                System.out.println("\n\nErro ao atualizar saldo\n\nDetalhes do erro: " + e.getSQLState());
+                System.out.println("\n\nErro ao atualizar saldo\n\nDetalhes do erro: " + e.getSQLState() + "\n\nMais detalhes: " + e.getMessage());
             }
     }
 
-    public void remover(int id){
-        String sql = "DELETE FROM contas WHERE id=?";
+    public void remover(int numero){
+        String sql = "DELETE FROM contas WHERE numero=?";
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, numero);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("\n\nErro ao deletar conta\n\nDetalhes do erro: " + e.getSQLState());
+            System.out.println("\n\nErro ao deletar conta\n\nDetalhes do erro: " + e.getSQLState() + "\n\nMais detalhes: " + e.getMessage());
         }
     }
 
@@ -126,7 +127,7 @@ public class ContaCorrenteDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     conta = new ContaCorrente(
-                        rs.getInt("id"),
+                        rs.getInt("numero"),
                         rs.getString("titular"),
                         rs.getString("email"),
                         rs.getString("senha"),
@@ -136,14 +137,14 @@ public class ContaCorrenteDAO {
             }
         } catch (SQLException e) {
             System.err.println("\n\nErro ao realizar login\n\nDetalhes do erro: " + e.getMessage());
-            throw new ContaInexistenteException("Email ou senha inválidos");
+            throw new ContaInexistenteException("Email ou senha inválnumeroos");
         }
         return conta;
     }
 
-    public void transferir(int idOrigem, int idDestino, BigDecimal valor) throws ContaInexistenteException, SaldoInsuficienteException{
-        String contaOrigem = "UPDATE contas SET saldo = saldo - ? WHERE id = ?";
-        String contaDestino = "UPDATE contas SET saldo = saldo + ? WHERE id = ?";
+    public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor) throws ContaInexistenteException, SaldoInsuficienteException{
+        String contaOrigem = "UPDATE contas SET saldo = saldo - ? WHERE numero = ?";
+        String contaDestino = "UPDATE contas SET saldo = saldo + ? WHERE numero = ?";
 
         try (Connection conn = Conexao.getConnection()) {
             conn.setAutoCommit(false);
@@ -152,11 +153,11 @@ public class ContaCorrenteDAO {
                  PreparedStatement destino = conn.prepareStatement(contaDestino)) {
 
                 origem.setDouble(1, valor.doubleValue());
-                origem.setInt(2, idOrigem);
+                origem.setInt(2, numeroOrigem);
                 origem.executeUpdate();
 
                 destino.setDouble(1, valor.doubleValue());
-                destino.setInt(2, idDestino);
+                destino.setInt(2, numeroDestino);
                 destino.executeUpdate();
 
                 conn.commit();
@@ -172,5 +173,49 @@ public class ContaCorrenteDAO {
         } catch (SQLException e) {
             System.out.println("Erro ao transferir\n\nDetalhes do erro: " + e.getMessage());
         }
+    }
+
+    public void movimentacoes(Movimentacao movimentacao) throws SQLException{
+        String sql = "INSERT INTO movimentacoes (numero_conta, tipo, valor) VALUES (?,?,?)";
+
+        try(Connection conn = Conexao.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            stmt.setInt(1, movimentacao.getNumero());
+            stmt.setString(2, movimentacao.getTipo());
+            stmt.setDouble(3, movimentacao.getValor().doubleValue());
+            stmt.executeUpdate();
+        }
+        catch (SQLException e){
+            System.out.println("\n\nErro ao registrar movimentação\n\nDetalhes do erro: " + e.getSQLState() + "\n" + e.getMessage());
+        }
+    }
+
+    public List<Movimentacao> listarExtrato(int numero) throws SQLException{
+        List<Movimentacao> movimentacoes = new ArrayList<>();
+        String sql = "SELECT * FROM movimentacoes WHERE numero_conta = ?";
+        try(Connection conn = Conexao.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, numero);
+                try(ResultSet rs = pstmt.executeQuery()){
+                    while(rs.next()){
+                        Movimentacao m = new Movimentacao(
+                            rs.getInt("id"),
+                            rs.getInt("numero_conta"),
+                            rs.getString("tipo"),
+                            rs.getBigDecimal("valor"),
+                            rs.getString("data")
+                        );
+                        movimentacoes.add(m);
+                    }
+                }catch (SQLException e) {
+                    System.out.println("\n\nErro ao listar extrato\n\nDetalhes do erro: " + e.getSQLState() + "\nMais detalhes: " + e.getMessage());
+                }
+            }
+            catch(SQLException e){
+                System.out.println("\n\nErro ao listar extrato\n\nDetalhes do erro: " + e.getSQLState() + "\nMais detalhes: " + e.getMessage());
+            }
+
+            return movimentacoes;
     }
 }

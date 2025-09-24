@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Contas Bancarias</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="carregarListaMainDeMovimentacoes()">
+
+    <button id="alterar-tema">Alterar Tema</button>
+    
+    <header><h1 id="title-page">Gerenciador de Contas Bancarias</h1></header>
+    
+    <main id="painel-principal">
+        <div class="container">
+            
+            <button class="sair" style="top: 10px;" onclick="voltarParaContas()">Sair</button>
+
+            <section class="title-section" style="top: 0;">
+                <p id="movimentacoes-title">Movimentações da conta: nome</p>
+            </section>
+            
+
+            <hr>
+
+            <section class="registros-list">
+                <table>
+                    <!-- <li>id:1 | numero:1 | tipo:SAQUE | valor: R$0000 | data: 2/2/2</li>
+                    <li>id:1 | numero:1 | tipo:SAQUE | valor: R$0000 | data: 2/2/2</li>
+                    <li>id:1 | numero:1 | tipo:SAQUE | valor: R$0000 | data: 2/2/2</li> -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numero</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registros-list">
+                        <!-- <tr>
+                            <td>ID</td>
+                            <td>Numero</td>
+                            <td>Tipo</td>
+                            <td>Valor</td>
+                            <td>Data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </section>
+
+            <hr>
+            
+            <section class="gerar-regsitro-section">
+                <button id="btn-gerar-regsitro" onclick="gerarExtrato()">Gerar Extrato</button>
+            </section>
+
+        </div>
+    </main>
+
+    <footer><p>© João Alves Passos</p></footer>
+</body>
+
+    <script src="script.js"></script>
+    <script src="contaController.js"></script>
+    <script src="servicesController.js"></script>
+
+</html>

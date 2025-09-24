@@ -52,11 +52,12 @@
                 </section>
             </aside>
 
-            <button id="sair-conta" onclick="voltarListaDeContas(), limparLocalStorageConta()">Sair</button>
-            <button id="deletar-conta" onclick="deletarConta()">Deletar conta</button>
             <button id="btn-sacar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Sacar</button>
             <button id="btn-depositar" class="btn-menu-conta" onclick="abrirMenuServices(this)">Depositar</button>
             <button id="btn-transacao" class="btn-menu-conta" onclick="abrirMenuServices(this)">Transferir</button>
+            <button id="ir-movimentacoes" class="btn-menu-conta" onclick="irParaMovimentacoes()">Movimentações</button>
+            <button id="deletar-conta" class="btn-menu-conta" onclick="deletarConta()">Deletar conta</button>
+            <button id="sair-conta" class="btn-menu-conta" onclick="voltarListaDeContas(), limparLocalStorageConta()">Sair</button>
             
             <div class="title" style="margin-top: 50px; flex-direction: column; align-items: start; gap: 10px;">
                 <p style="margin-left: 20px;" id="id-conta">ID#0000</p>
