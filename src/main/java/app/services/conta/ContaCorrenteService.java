@@ -185,6 +185,6 @@ public class ContaCorrenteService {
         for (Movimentacao m : movimentacoes) {
             dados.append(m.toString()).append("\n");
         }
-        Files.write(Paths.get("extrato_" + numero + ".txt"), dados.toString().getBytes());
+        Files.write(Paths.get("./src/logs/extrato_" + numero + ".txt"), dados.toString().getBytes(StandardCharsets.UTF_8));
     }
 }
