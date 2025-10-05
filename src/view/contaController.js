@@ -172,24 +172,25 @@ async function deletarConta() {
 
     const conta = JSON.parse(localStorage.getItem("Conta"));
 
-    try{
-        await fetch(`${urlServe}/api/contas/corrente`, {
+        const response = await fetch(`${urlServe}/api/contas/corrente/${conta.numero}`, {
             method: "DELETE",
-            body: JSON.stringify(conta.numero),
             headers: {
                 "Content-Type": "application/json"
             }
         })
+        
+        if(response.status !== 200){
+            const error = await response.json();
+            console.log("Erro ao deletar a conta")
+            console.error("Erro: " + error.message);
+            alert("Erro ao deletar conta\nDetalhes do erro: " + error.message)
+            return;
+        }
         alert("Conta deletada com sucesso!")
 
         limparLocalStorageConta();
         voltarListaDeContas();
-    }catch(error){
-        console.log("Erro ao deletar a conta")
-        console.error("Erro: " + error.message);
-        alert("Erro ao deletar conta\nDetalhes do erro: " + error.message)
-        return;
-    }
+    
 }
 
 async function updateConta(e) {
